@@ -2,4 +2,13 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="button_blue">#CC03A9F4</color>
+    <color name="button_blue_clicked">#CC00BCD4</color>
+    <color name="main_bg">#F4F4F4</color>
+    <color name="top_bar_blue">#00BDFC</color>
+    <color name="base_white">#FBFBFA</color>
+    <color name="灰色">#999999</color>
+    <color name="chat_bg">#F0F0F0</color>
+    <color name="chat_bar">#F7F7F7</color>
+    <color name="chatting_bubble">#0198FE</color>
 </resources>
