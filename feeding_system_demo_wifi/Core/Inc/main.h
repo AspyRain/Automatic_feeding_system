@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define Usart_TX_Pin GPIO_PIN_2
+#define Usart_TX_GPIO_Port GPIOA
+#define Usart_RX_Pin GPIO_PIN_3
+#define Usart_RX_GPIO_Port GPIOA
 #define feeding_1_Pin GPIO_PIN_4
 #define feeding_1_GPIO_Port GPIOA
 #define feeding_2_Pin GPIO_PIN_5
