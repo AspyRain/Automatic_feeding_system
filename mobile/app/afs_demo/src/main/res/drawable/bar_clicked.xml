@@ -1,0 +1,4 @@
+<!-- rounded_corners.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/灰色" /> <!-- 设置背景颜色 -->
+</shape>

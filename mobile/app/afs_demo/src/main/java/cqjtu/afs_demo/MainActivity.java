@@ -23,6 +23,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         dateText = findViewById(R.id.dateText);
         feed1Button = findViewById(R.id.feed1_button);
         feed2Button = findViewById(R.id.feed2_button);
+        getTimeButton = findViewById(R.id.get_time_button);
+
+        getTimeButton.setOnClickListener(this);
+        feed1Button.setOnClickListener(this);
+        feed2Button.setOnClickListener(this);
     }
     private void button_clicked(View button, int clicked_resID) {
         Handler handler = new Handler();
@@ -60,11 +65,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v == getTimeButton){
-            button_clicked(getTimeButton)
+            button_clicked(getTimeButton,R.drawable.bar_clicked);
         }else if (v == feed1Button){
-
+            button_clicked(feed1Button,R.drawable.bar_clicked);
         }else if (v == feed2Button){
-
+            button_clicked(feed2Button,R.drawable.bar_clicked);
         }
     }
 }
