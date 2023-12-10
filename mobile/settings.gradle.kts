@@ -15,4 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AFS_mobile"
 include(":app")
- 
+include(":app:afs_demo")
