@@ -16,6 +16,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
@@ -70,10 +71,10 @@ uint8_t usart2_rx_index = 0;
 uint8_t usart1_rx_buffer[BUFFER_SIZE];
 uint8_t usart1_rx_index = 0;
 
-int feedNumFlag=0;
+int feedNumFlag = 0;
 
-void Esp01s_Init(char* ip, char* password,char* port);
-void sendData(UART_HandleTypeDef *huart, const char *str) ;
+void Esp01s_Init(char* ip, char* password, char* port);
+void sendData(UART_HandleTypeDef *huart, const char *str);
 void parseAndProcessCommand(char *command);
 void controller(void *promt);
 /* USER CODE END 0 */
@@ -94,7 +95,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
- feeding_init();
+  feeding_init();
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -112,7 +113,7 @@ int main(void)
   
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
- Esp01s_Init("AspyRain","Lxr20030106","8080");
+  Esp01s_Init("AspyRain","Lxr20030106","8080");
 
 
   /* Infinite loop */
@@ -230,18 +231,14 @@ void parseAndProcessCommand(char *command) {
     int value;
     sscanf(substring + strlen("+IPD,0,1:"), "%d,", &value);
     // 在这里处理提取出的值
-    // 你可以将提取出的值存储到全局变量中或者进行其他逻辑操作
-    // 这里的 value 就是你要的数据，例如这里的 3
+    // 将提取出的值存储到全局变量中
+    // 这里的 value/10(减去末尾0) 就是发送的数据
     feedNumFlag = value/10;
-    if (feedNumFlag>0&&feedNumFlag<4){
+    if (feedNumFlag>0 && feedNumFlag<4){
      toggle_feed(feedNumFlag);
     }
   }
 }
-
-
-
-
 
 /* USER CODE END 4 */
 
