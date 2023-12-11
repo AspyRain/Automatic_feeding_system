@@ -16,6 +16,7 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "i2c.h"
@@ -27,6 +28,7 @@
 #include <rtthread.h>
 #include "stdio.h"
 #include "string.h"
+#include "stdlib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,10 +60,10 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 200
 
- char usart2_c;
-char usart1_c;
+uint8_t usart1_c; 
+uint8_t usart2_c; 
 
 uint8_t usart2_rx_buffer[BUFFER_SIZE];
 uint8_t usart2_rx_index = 0;
@@ -69,6 +71,13 @@ uint8_t usart2_rx_index = 0;
 uint8_t usart1_rx_buffer[BUFFER_SIZE];
 uint8_t usart1_rx_index = 0;
 
+int feedNumFlag = 0;
+
+void Esp01s_Init(char* ip, char* password, char* port);
+void sendData(UART_HandleTypeDef *huart, const char *str);
+void parseAndProcessCommand(char *command);
+void controller(void *promt);
+char* extractData(const char *inputString) ;
 /* USER CODE END 0 */
 
 /**
@@ -87,7 +96,6 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -102,19 +110,19 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  
   /* USER CODE BEGIN 2 */
-  // Start USART2 reception
-  HAL_UART_Receive_IT(&huart2, (uint8_t *)&usart2_c, 1);
-  // Start USART1 reception
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
   /* USER CODE END 2 */
+  Esp01s_Init("AspyRain","Lxr20030106","8080");
+
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    HAL_Delay(2);
+
+    rt_thread_mdelay(20);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -155,36 +163,97 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
+void Esp01s_Init(char* ip, char* password, char* port) {
+  // 禁用USART1接收中断
+  __HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
 
-/* USER CODE BEGIN 4 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-  if (huart == &huart2) {
-    usart2_rx_buffer[usart2_rx_index++] = usart2_c;
-    if (usart2_c == '\n') {
-      if (usart2_rx_index >= 2 && usart2_rx_buffer[0] == 'A' && usart2_rx_buffer[1] == 'T') {
-        // Transmit the received string to USART1
-        HAL_UART_Transmit(&huart1, usart2_rx_buffer, strlen(usart2_rx_buffer), HAL_MAX_DELAY);
-        usart2_rx_index = 0; // Reset index for the next string
-      }
-    usart2_rx_index = 0;  // 重置缓冲区索引
-    memset(usart2_rx_buffer, 0, sizeof(usart2_rx_buffer));
-    }
-    // USART2 RX interrupt callback
+  char command[50];
+  // 发送初始化指令到ESP01S
+  sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
+  sendData(&huart1, command);
+  rt_thread_mdelay(1000);  // 等待一段时间
 
-    // Enable USART2 receive interrupt again
-    HAL_UART_Receive_IT(&huart2, (uint8_t *)&usart2_c, 1);
-  }
+  sprintf(command, "AT+CIPMUX=1\r\n");
+  sendData(&huart1, command);
+  rt_thread_mdelay(1000);
 
-  if (huart == &huart1) {
+  sprintf(command, "AT+CIPSERVER=1,%s\r\n", port);
+  sendData(&huart1, command);
+  rt_thread_mdelay(2000);
+	rt_kprintf("初始化完成\n");
 
-    rt_kprintf(&usart1_c);
-    HAL_UART_Receive_IT(&huart1,(uint8_t *)&usart1_c , 1);
-    
-  }
+  // 清空接收缓冲区
+  huart1.Instance->DR; // 读取数据寄存器，将接收缓冲区中的数据清空
+
+  // 重新启用USART1接收中断
+  __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
+  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
+}
+void sendData(UART_HandleTypeDef *huart, const char *str) {
+  HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
 }
 
 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+  if (huart == &huart1) {
+      
+    // 在这里处理接收到的数据
+    if (usart1_c == '+') {
+      // 开始接收一条新指令
+      usart1_rx_index = 0;
+    }
+    
+    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
+    
+    if (strstr((char*)usart1_rx_buffer, "CLOSED")!=NULL) {
+      // 收到一条完整的指令
+      
+      usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
 
+      // 在这里解析指令
+      parseAndProcessCommand((char*)usart1_rx_buffer);
+
+      // 清空接收缓冲区，准备接收下一条指令
+      usart1_rx_index = 0;
+      memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
+    }
+    // 继续启动下一次接收
+      HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
+
+  }
+
+}
+
+void parseAndProcessCommand(char *command) {
+  // 在这里解析和处理指令
+  if (command != NULL) {
+		char* data=extractData(command);
+		rt_kprintf("get_wifi_data:");
+		rt_kprintf(data);
+		rt_kprintf("\n");
+  }
+}
+// 从字符串中提取两个指定字符串之间的数据
+char* extractData(const char* input) {
+    // 找到真正数据的起始位置
+    const char* dataStart = strstr(input, ":");
+    if (dataStart == NULL) {
+        // 如果没有找到冒号，返回空指针表示失败
+        return NULL;
+    }
+
+    // 获取真正数据的长度
+    int dataLength = atoi(input + 7);
+
+    // 分配足够的空间来存储真正数据
+    char* extractedData = (char*)malloc((dataLength + 1) * sizeof(char));
+
+    // 复制真正数据到提取的字符串中
+    strncpy(extractedData, dataStart + 1, dataLength);
+    extractedData[dataLength] = '\0'; // 添加字符串终止符
+
+    return extractedData;
+}
 /* USER CODE END 4 */
 
 /**

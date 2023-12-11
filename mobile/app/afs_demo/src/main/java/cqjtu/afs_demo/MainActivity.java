@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -19,6 +20,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout feed2Button;
     private EditText ip_text;
     private EditText port_text;
+    private EditText chat_text;
+    private Button send_button;
     private final String default_ip = "192.168.118.136";
     private final String default_port ="8080";
 
@@ -34,7 +37,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         port_text = findViewById(R.id.port);
         ip_text.setText(default_ip);
         port_text.setText(default_port);
+        chat_text = findViewById(R.id.chat_text);
+        send_button = findViewById(R.id.send_button);
 
+        send_button.setOnClickListener(this);
         getTimeButton.setOnClickListener(this);
         feed1Button.setOnClickListener(this);
         feed2Button.setOnClickListener(this);
@@ -52,6 +58,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } else if (v == feed2Button) {
             button_clicked(feed2Button,R.drawable.bar_clicked);
             message = "3";  // 发送消息 "3" 给ESP01S
+        }else if (v==send_button){
+            message = chat_text.getText().toString();
+            chat_text.setText(null);
         }
 
         sendMessage(message);

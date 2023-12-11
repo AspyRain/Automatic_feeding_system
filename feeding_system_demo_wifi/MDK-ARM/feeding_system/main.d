@@ -37,4 +37,5 @@ feeding_system/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h
