@@ -8,6 +8,9 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextClock;
+import android.Manifest;
+
+import cqjtu.afs_demo.util.PermissionUtil;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextClock timeText;
@@ -15,6 +18,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private LinearLayout getTimeButton;
     private LinearLayout feed1Button;
     private LinearLayout feed2Button;
+    private final String ip = "192.168.118.136";
+    private final String port ="8080";
+
+    private static final String[] PERMISSIONS=new String[]{
+            Manifest.permission.INTERNET,//访问互联网
+
+    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +38,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getTimeButton.setOnClickListener(this);
         feed1Button.setOnClickListener(this);
         feed2Button.setOnClickListener(this);
+
+        // 注册广播接收器
+        PermissionUtil.checkPermission(this,PERMISSIONS,100);
     }
     private void button_clicked(View button, int clicked_resID) {
         Handler handler = new Handler();
@@ -64,12 +77,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if (v == getTimeButton){
-            button_clicked(getTimeButton,R.drawable.bar_clicked);
-        }else if (v == feed1Button){
-            button_clicked(feed1Button,R.drawable.bar_clicked);
-        }else if (v == feed2Button){
-            button_clicked(feed2Button,R.drawable.bar_clicked);
+        if (v == getTimeButton) {
+            button_clicked(getTimeButton, R.drawable.bar_clicked);
+            sendMessage("1");  // 发送消息 "1" 给ESP01S
+        } else if (v == feed1Button) {
+            button_clicked(feed1Button, R.drawable.bar_clicked);
+            sendMessage("2");  // 发送消息 "2" 给ESP01S
+        } else if (v == feed2Button) {
+            button_clicked(feed2Button, R.drawable.bar_clicked);
+            sendMessage("3");  // 发送消息 "3" 给ESP01S
         }
     }
+
+    private void sendMessage(final String message) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String url = "http://" + ip + ":" + port;  // 拼接URL
+                    okhttp3.OkHttpClient client = new okhttp3.OkHttpClient();
+                    okhttp3.RequestBody body = okhttp3.RequestBody.create(message, okhttp3.MediaType.parse("text/plain"));
+
+                    okhttp3.Request request = new okhttp3.Request.Builder()
+                            .url(url)
+                            .post(body)
+                            .build();
+
+                    okhttp3.Response response = client.newCall(request).execute();
+
+                    // 处理响应，如果有需要的话
+                    String responseBody = response.body().string();
+                    // 在这里添加处理响应的代码
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
 }
