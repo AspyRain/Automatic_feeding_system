@@ -67,6 +67,8 @@ void Error_Handler(void);
 #define feeding_2_GPIO_Port GPIOA
 #define feeding_3_Pin GPIO_PIN_6
 #define feeding_3_GPIO_Port GPIOA
+#define esp_enable_flag_Pin GPIO_PIN_7
+#define esp_enable_flag_GPIO_Port GPIOA
 #define clock_pon_Pin GPIO_PIN_15
 #define clock_pon_GPIO_Port GPIOB
 #define clock_tccn_Pin GPIO_PIN_8

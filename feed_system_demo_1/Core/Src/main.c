@@ -58,7 +58,7 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUFFER_SIZE 100
+#define BUFFER_SIZE 200
 
  char usart2_c;
 char usart1_c;
@@ -68,7 +68,11 @@ uint8_t usart2_rx_index = 0;
 
 uint8_t usart1_rx_buffer[BUFFER_SIZE];
 uint8_t usart1_rx_index = 0;
-void Esp01s_Init(char* ip, char* password);
+
+int feedNumFlag=0;
+
+void Esp01s_Init(char* ip, char* password,char* port);
+void sendData(UART_HandleTypeDef *huart, const char *str) ;
 /* USER CODE END 0 */
 
 /**
@@ -102,15 +106,31 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+  HAL_UART_Receive_IT(&huart1, (uint8_t*)usart1_c, 1);
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
- Esp01s_Init("AspyRain","Lxr20030106");
+ Esp01s_Init("AspyRain","Lxr20030106","8080");
+
+rt_thread_t usart_task_tid = rt_thread_create("controller",/* 线程名称 */
+                            controller, RT_NULL,
+                            1024, 3, 10); //
+    if(usart_task_tid != RT_NULL)
+    {
+        /* 启动线程 */
+        rt_thread_startup(usart_task_tid);
+        rt_kprintf("usart thread is already started\n");
+        
+    }
+    else
+    {
+        rt_kprintf("usart thread is not started\n");
+    }
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    HAL_Delay(2);
+    rt_thread_mdelay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -151,25 +171,72 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-void Esp01s_Init(char* ip, char* password) {
-  // 发送初始化指令到ESP01S
+void Esp01s_Init(char* ip, char* password, char* port) {
   char command[50];
+
+  // 发送初始化指令到ESP01S
   sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
-  
-  HAL_UART_Transmit(&huart1, (uint8_t*)command, strlen(command), HAL_MAX_DELAY);
+  sendData(&huart1, command);
+  rt_thread_mdelay(1000);  // 等待一段时间
 
-  // 等待ESP01S响应
-  char response[100];
-  HAL_UART_Receive(&huart1, (uint8_t*)response, sizeof(response), HAL_MAX_DELAY);
+  sprintf(command, "AT+CIPMUX=1\r\n");
+  sendData(&huart1, command);
+  rt_thread_mdelay(1000);
 
-  // 处理ESP01S响应，你可能需要根据具体情况进行错误处理或其他操作
-  // 这里简单地打印出ESP01S的响应
-  HAL_UART_Transmit(&huart2, (uint8_t*)response, strlen(response), HAL_MAX_DELAY);
+
+  sprintf(command, "AT+CIPSERVER=1,%s\r\n", port);
+  sendData(&huart1, command);
+  rt_thread_mdelay(1000);
+  HAL_GPIO_WritePin(esp_enable_flag_GPIO_Port,esp_enable_flag_Pin,GPIO_PIN_SET);
 }
-/* USER CODE BEGIN 4 */
+void sendData(UART_HandleTypeDef *huart, const char *str) {
+  HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+}
+void controller(){
+  while (1){
+    
+  }
+}
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+  if (huart == &huart1) {
+    // 在这里处理接收到的数据
+    if (usart1_c == '+') {
+      // 开始接收一条新指令
+      usart1_rx_index = 0;
+    }
+    
+    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
 
+    if (usart1_c == '\n') {
+      // 收到一条完整的指令
+      usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
+
+      // 在这里解析指令
+      parseAndProcessCommand(usart1_rx_buffer);
+
+      // 清空接收缓冲区，准备接收下一条指令
+      usart1_rx_index = 0;
+    }
+    
+    // 继续启动下一次接收
+    HAL_UART_Receive_IT(&huart1, (uint8_t*)&usart1_c, 1);
+  }
 }
+
+void parseAndProcessCommand(char *command) {
+  // 在这里解析和处理指令
+  // 例如，查找 +IPD,0,1: 后面的数据并去掉末尾的 0
+  char *substring = strstr(command, "+IPD,0,1:");
+  if (substring != NULL) {
+    int value;
+    sscanf(substring + strlen("+IPD,0,1:"), "%d,", &value);
+    // 在这里处理提取出的值
+    // 你可以将提取出的值存储到全局变量中或者进行其他逻辑操作
+    // 这里的 value 就是你要的数据，例如这里的 3
+    feedNumFlag = value;
+  }
+}
+
 
 
 
