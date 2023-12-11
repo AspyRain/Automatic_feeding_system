@@ -163,7 +163,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (usart2_c == '\n') {
       if (usart2_rx_index >= 2 && usart2_rx_buffer[0] == 'A' && usart2_rx_buffer[1] == 'T') {
         // Transmit the received string to USART1
-        HAL_UART_Transmit(&huart1, usart2_rx_buffer, usart2_rx_index, HAL_MAX_DELAY);
+        HAL_UART_Transmit(&huart1, usart2_rx_buffer, strlen(usart2_rx_buffer), HAL_MAX_DELAY);
         usart2_rx_index = 0; // Reset index for the next string
       }
     usart2_rx_index = 0;  // 重置缓冲区索引
@@ -176,8 +176,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   }
 
   if (huart == &huart1) {
-    HAL_UART_Transmit(&huart2, (uint8_t *)&usart1_c, 1, HAL_MAX_DELAY);
+
+    rt_kprintf(&usart1_c);
     HAL_UART_Receive_IT(&huart1,(uint8_t *)&usart1_c , 1);
+    
   }
 }
 
