@@ -45,13 +45,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         String message = "";
         if (v == getTimeButton) {
             button_clicked(getTimeButton,R.drawable.bar_clicked);
-            message = "first";  // 发送消息 "1" 给ESP01S
+            message = "1";  // 发送消息 "1" 给ESP01S
         } else if (v == feed1Button) {
             button_clicked(feed1Button,R.drawable.bar_clicked);
-            message = "second";  // 发送消息 "2" 给ESP01S
+            message = "2";  // 发送消息 "2" 给ESP01S
         } else if (v == feed2Button) {
             button_clicked(feed2Button,R.drawable.bar_clicked);
-            message = "third";  // 发送消息 "3" 给ESP01S
+            message = "3";  // 发送消息 "3" 给ESP01S
         }
 
         sendMessage(message);
