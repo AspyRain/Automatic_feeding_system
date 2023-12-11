@@ -18,16 +18,14 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "i2c.h"
 #include "usart.h"
 #include "gpio.h"
+#include <rtthread.h>
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <rtthread.h>
-#include "stdio.h"
-#include "string.h"
-#include "feeding.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,6 +35,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+
 
 /* USER CODE END PD */
 
@@ -48,7 +48,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-#define BUFFER_SIZE 200
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -59,23 +59,36 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUFFER_SIZE 200
+void send_data(void *promt){
+  while (1)
+  {
+    rt_thread_mdelay(1000);
+    HAL_UART_Transmit(&huart1,(uint8_t*)"你好RT_thread!\r\n",rt_strlen("你好RT_thread!\r\n"),0xffff);
+  }
+}
 
-uint8_t usart1_c; 
-uint8_t usart2_c; 
 
-uint8_t usart2_rx_buffer[BUFFER_SIZE];
-uint8_t usart2_rx_index = 0;
+uint16_t flag=0;             //声明变量，作为开关标志
 
-uint8_t usart1_rx_buffer[BUFFER_SIZE];
-uint8_t usart1_rx_index = 0;
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	
+   if(GPIO_Pin == GPIO_PIN_7){   //确认中断位置
+	   
+   GPIO_PinState pinState = HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_7);     //获取A7当前电位
+	   
+   if(pinState==GPIO_PIN_SET)//高电位流水灯亮
+   {
+ 	  flag=1;
+   }
+   
+   else if(pinState==GPIO_PIN_RESET)//低电位流水灯灭
+   {
+ 	  flag=0;
+   }
+   } 
+}
 
-int feedNumFlag=0;
-
-void Esp01s_Init(char* ip, char* password,char* port);
-void sendData(UART_HandleTypeDef *huart, const char *str) ;
-void parseAndProcessCommand(char *command);
-void controller(void *promt);
 /* USER CODE END 0 */
 
 /**
@@ -94,7 +107,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
- feeding_init();
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -106,14 +119,28 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_I2C1_Init();
   MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
-  
   /* USER CODE BEGIN 2 */
-  /* USER CODE END 2 */
- Esp01s_Init("AspyRain","Lxr20030106","8080");
+  rt_thread_mdelay(1000);
+  
+      /* 创建线程 */
+    rt_thread_t usart_task_tid = rt_thread_create("send_data",/* 线程名称 */
+                            send_data, RT_NULL,
+                            1024, 3, 10); //
+    if(usart_task_tid != RT_NULL)
+    {
+        /* 启动线程 */
+        rt_thread_startup(usart_task_tid);
+        rt_kprintf("usart thread is already started\n");
+        
+    }
+    else
+    {
+        rt_kprintf("usart thread is not started\n");
+    }
 
+
+  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -121,8 +148,18 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-    rt_thread_mdelay(20);
     /* USER CODE BEGIN 3 */
+	  if(flag==1){
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
+		rt_thread_mdelay(1000);
+		HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
+		rt_thread_mdelay(1000);
+	  }
+	  else 
+		  	HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_RESET);
+
+
+
   }
   /* USER CODE END 3 */
 }
@@ -139,10 +176,13 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
+  RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
+  RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -152,96 +192,18 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }
 }
-void Esp01s_Init(char* ip, char* password, char* port) {
-  // 禁用USART1接收中断
-  __HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
 
-  char command[50];
-  // 发送初始化指令到ESP01S
-  sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
-  sendData(&huart1, command);
-  rt_thread_mdelay(1000);  // 等待一段时间
-
-  sprintf(command, "AT+CIPMUX=1\r\n");
-  sendData(&huart1, command);
-  rt_thread_mdelay(1000);
-
-  sprintf(command, "AT+CIPSERVER=1,%s\r\n", port);
-  sendData(&huart1, command);
-  rt_thread_mdelay(2000);
-  HAL_GPIO_WritePin(esp_enable_flag_GPIO_Port, esp_enable_flag_Pin, GPIO_PIN_SET);
-
-  // 清空接收缓冲区
-  huart1.Instance->DR; // 读取数据寄存器，将接收缓冲区中的数据清空
-
-  // 重新启用USART1接收中断
-  __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
-}
-void sendData(UART_HandleTypeDef *huart, const char *str) {
-  HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
-}
-
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-  if (huart == &huart1) {
-      
-    // 在这里处理接收到的数据
-    if (usart1_c == '+') {
-      // 开始接收一条新指令
-      usart1_rx_index = 0;
-    }
-    
-    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
-    
-    if (strstr(usart1_rx_buffer, "CLOSED")!=NULL) {
-      // 收到一条完整的指令
-      
-      usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
-
-      // 在这里解析指令
-      parseAndProcessCommand(usart1_rx_buffer);
-
-      // 清空接收缓冲区，准备接收下一条指令
-      usart1_rx_index = 0;
-      memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
-    }
-    // 继续启动下一次接收
-      HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
-
-  }
-
-}
-
-void parseAndProcessCommand(char *command) {
-  // 在这里解析和处理指令
-  char *substring = strstr(command, "+IPD,0,1:");
-  if (substring != NULL) {
-    int value;
-    sscanf(substring + strlen("+IPD,0,1:"), "%d,", &value);
-    // 在这里处理提取出的值
-    // 你可以将提取出的值存储到全局变量中或者进行其他逻辑操作
-    // 这里的 value 就是你要的数据，例如这里的 3
-    feedNumFlag = value/10;
-    if (feedNumFlag>0&&feedNumFlag<4){
-     toggle_feed(feedNumFlag);
-    }
-  }
-}
-
-
-
-
+/* USER CODE BEGIN 4 */
 
 /* USER CODE END 4 */
 

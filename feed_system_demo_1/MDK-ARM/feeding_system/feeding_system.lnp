@@ -6,6 +6,7 @@
 "feeding_system\usart.o"
 "feeding_system\stm32f1xx_it.o"
 "feeding_system\stm32f1xx_hal_msp.o"
+"feeding_system\feeding.o"
 "feeding_system\stm32f1xx_hal_gpio_ex.o"
 "feeding_system\stm32f1xx_hal_i2c.o"
 "feeding_system\stm32f1xx_hal.o"

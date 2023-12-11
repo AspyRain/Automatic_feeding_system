@@ -425,6 +425,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_msp.c</FilePath>
             </File>
+            <File>
+              <FileName>feeding.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\feeding.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1528,9 +1533,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>::CMSIS</GroupName>
-        </Group>
-        <Group>
           <GroupName>Middlewares/RT-Thread/RTOS/shell</GroupName>
           <GroupOption>
             <CommonProperty>
@@ -1827,6 +1829,9 @@
               </FileOption>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>
