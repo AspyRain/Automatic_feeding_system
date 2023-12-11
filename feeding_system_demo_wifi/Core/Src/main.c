@@ -25,6 +25,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <rtthread.h>
+#include "stdio.h"
+#include "string.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,7 +47,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
+#define BUFFER_SIZE 200
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,6 +58,16 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define BUFFER_SIZE 100
+
+ char usart2_c;
+char usart1_c;
+
+uint8_t usart2_rx_buffer[BUFFER_SIZE];
+uint8_t usart2_rx_index = 0;
+
+uint8_t usart1_rx_buffer[BUFFER_SIZE];
+uint8_t usart1_rx_index = 0;
 
 /* USER CODE END 0 */
 
@@ -91,7 +103,10 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  // Start USART2 reception
+  HAL_UART_Receive_IT(&huart2, (uint8_t *)&usart2_c, 1);
+  // Start USART1 reception
+  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -99,7 +114,7 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
+    HAL_Delay(2);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -142,6 +157,31 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
+  if (huart == &huart2) {
+    usart2_rx_buffer[usart2_rx_index++] = usart2_c;
+    if (usart2_c == '\n') {
+      if (usart2_rx_index >= 2 && usart2_rx_buffer[0] == 'A' && usart2_rx_buffer[1] == 'T') {
+        // Transmit the received string to USART1
+        HAL_UART_Transmit(&huart1, usart2_rx_buffer, usart2_rx_index, HAL_MAX_DELAY);
+        usart2_rx_index = 0; // Reset index for the next string
+      }
+    usart2_rx_index = 0;  // 重置缓冲区索引
+    memset(usart2_rx_buffer, 0, sizeof(usart2_rx_buffer));
+    }
+    // USART2 RX interrupt callback
+
+    // Enable USART2 receive interrupt again
+    HAL_UART_Receive_IT(&huart2, (uint8_t *)&usart2_c, 1);
+  }
+
+  if (huart == &huart1) {
+    HAL_UART_Transmit(&huart2, (uint8_t *)&usart1_c, 1, HAL_MAX_DELAY);
+    HAL_UART_Receive_IT(&huart1,(uint8_t *)&usart1_c , 1);
+  }
+}
+
+
 
 /* USER CODE END 4 */
 

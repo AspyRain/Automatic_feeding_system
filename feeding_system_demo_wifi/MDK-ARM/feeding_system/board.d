@@ -3,12 +3,12 @@ feeding_system/board.o: \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rthw.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h \
   ..\RT-Thread\rtconfig.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdebug.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdef.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdarg.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
   ..\Core\Inc\main.h ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h \
   ..\Core\Inc\stm32f1xx_hal_conf.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h \
