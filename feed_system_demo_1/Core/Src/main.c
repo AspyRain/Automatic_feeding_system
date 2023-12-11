@@ -68,7 +68,7 @@ uint8_t usart2_rx_index = 0;
 
 uint8_t usart1_rx_buffer[BUFFER_SIZE];
 uint8_t usart1_rx_index = 0;
-
+void Esp01s_Init(char* ip, char* password);
 /* USER CODE END 0 */
 
 /**
@@ -87,7 +87,7 @@ int main(void)
   HAL_Init();
 
   /* USER CODE BEGIN Init */
-
+ 
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -103,12 +103,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
-  // Start USART2 reception
-  HAL_UART_Receive_IT(&huart2, (uint8_t *)&usart2_c, 1);
-  // Start USART1 reception
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
   /* USER CODE END 2 */
-
+ Esp01s_Init("AspyRain","Lxr20030106");
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -155,33 +151,26 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
+void Esp01s_Init(char* ip, char* password) {
+  // 发送初始化指令到ESP01S
+  char command[50];
+  sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
+  
+  HAL_UART_Transmit(&huart1, (uint8_t*)command, strlen(command), HAL_MAX_DELAY);
 
+  // 等待ESP01S响应
+  char response[100];
+  HAL_UART_Receive(&huart1, (uint8_t*)response, sizeof(response), HAL_MAX_DELAY);
+
+  // 处理ESP01S响应，你可能需要根据具体情况进行错误处理或其他操作
+  // 这里简单地打印出ESP01S的响应
+  HAL_UART_Transmit(&huart2, (uint8_t*)response, strlen(response), HAL_MAX_DELAY);
+}
 /* USER CODE BEGIN 4 */
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-  if (huart == &huart2) {
-    usart2_rx_buffer[usart2_rx_index++] = usart2_c;
-    if (usart2_c == '\n') {
-      if (usart2_rx_index >= 2 && usart2_rx_buffer[0] == 'A' && usart2_rx_buffer[1] == 'T') {
-        // Transmit the received string to USART1
-        HAL_UART_Transmit(&huart1, usart2_rx_buffer, strlen(usart2_rx_buffer), HAL_MAX_DELAY);
-        usart2_rx_index = 0; // Reset index for the next string
-      }
-    usart2_rx_index = 0;  // 重置缓冲区索引
-    memset(usart2_rx_buffer, 0, sizeof(usart2_rx_buffer));
-    }
-    // USART2 RX interrupt callback
 
-    // Enable USART2 receive interrupt again
-    HAL_UART_Receive_IT(&huart2, (uint8_t *)&usart2_c, 1);
-  }
-
-  if (huart == &huart1) {
-
-    rt_kprintf(&usart1_c);
-    HAL_UART_Receive_IT(&huart1,(uint8_t *)&usart1_c , 1);
-    
-  }
 }
+
 
 
 

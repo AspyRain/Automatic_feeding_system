@@ -1,3 +1,4 @@
 Load "feeding_system\\feeding_system.axf" 
-Erase Done.Programming Done.Verify OK.Application running ...
-Flash Load finished at 12:20:51
+No ST-LINK detected
+Error: Flash Download failed  -  Target DLL has been cancelled
+Flash Load finished at 13:19:11
