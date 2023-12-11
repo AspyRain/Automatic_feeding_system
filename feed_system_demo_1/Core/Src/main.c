@@ -29,6 +29,7 @@
 #include "stdio.h"
 #include "string.h"
 #include "feeding.h"
+#include "stdlib.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -76,6 +77,7 @@ int feedNumFlag = 0;
 void Esp01s_Init(char* ip, char* password, char* port);
 void sendData(UART_HandleTypeDef *huart, const char *str);
 void parseAndProcessCommand(char *command);
+char* extractData(const char* input) ;
 void controller(void *promt);
 /* USER CODE END 0 */
 
@@ -226,20 +228,38 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
 
 void parseAndProcessCommand(char *command) {
   // 在这里解析和处理指令
-  char *substring = strstr(command, "+IPD,0,1:");
-  if (substring != NULL) {
-    int value;
-    sscanf(substring + strlen("+IPD,0,1:"), "%d,", &value);
+
+  if (command != NULL) {
+    char* data=extractData(command);
     // 在这里处理提取出的值
     // 将提取出的值存储到全局变量中
     // 这里的 value/10(减去末尾0) 就是发送的数据
-    feedNumFlag = value/10;
+    feedNumFlag =(int)extractData;
     if (feedNumFlag>0 && feedNumFlag<4){
      toggle_feed(feedNumFlag);
     }
   }
 }
+char* extractData(const char* input) {
+    // 找到真正数据的起始位置
+    const char* dataStart = strstr(input, ":");
+    if (dataStart == NULL) {
+        // 如果没有找到冒号，返回空指针表示失败
+        return NULL;
+    }
 
+    // 获取真正数据的长度
+    int dataLength = atoi(input + 7);
+
+    // 分配足够的空间来存储真正数据
+    char* extractedData = (char*)malloc((dataLength + 1) * sizeof(char));
+
+    // 复制真正数据到提取的字符串中
+    strncpy(extractedData, dataStart + 1, dataLength);
+    extractedData[dataLength] = '\0'; // 添加字符串终止符
+
+    return extractedData;
+}
 /* USER CODE END 4 */
 
 /**

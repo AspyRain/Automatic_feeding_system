@@ -233,7 +233,7 @@ void parseAndProcessCommand(char *command) {
 		rt_kprintf("\n");
   }
 }
-// 从字符串中提取两个指定字符串之间的数据
+
 char* extractData(const char* input) {
     // 找到真正数据的起始位置
     const char* dataStart = strstr(input, ":");
