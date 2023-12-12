@@ -233,8 +233,8 @@ void parseAndProcessCommand(char *command) {
     char* data=extractData(command);
     // 在这里处理提取出的值
     // 将提取出的值存储到全局变量中
-    // 这里的 value/10(减去末尾0) 就是发送的数据
-    feedNumFlag =(int)extractData;
+    feedNumFlag =atoi(data);
+    
     if (feedNumFlag>0 && feedNumFlag<4){
      toggle_feed(feedNumFlag);
     }
