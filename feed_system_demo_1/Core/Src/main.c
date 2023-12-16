@@ -30,6 +30,7 @@
 #include "string.h"
 #include "feeding.h"
 #include "stdlib.h"
+#include "flash.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -78,7 +79,7 @@ void Esp01s_Init(char* ip, char* password, char* port);
 void sendData(UART_HandleTypeDef *huart, const char *str);
 void parseAndProcessCommand(char *command);
 char* extractData(const char* input) ;
-void controller(void *promt);
+void flash_test();
 /* USER CODE END 0 */
 
 /**
@@ -112,12 +113,13 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-  
+
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
   Esp01s_Init("AspyRain","Lxr20030106","8080");
-
-
+  rt_thread_mdelay(3000);
+    rt_thread_t flash_thread = rt_thread_create("flash_test", flash_test, RT_NULL, 1024, 4, 10);
+  rt_thread_startup(flash_thread);
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -259,6 +261,21 @@ char* extractData(const char* input) {
     extractedData[dataLength] = '\0'; // 添加字符串终止符
 
     return extractedData;
+}
+void flash_test(){
+  char* data;
+  char* w_data;
+  int i=0;
+  while (1){
+  sprintf(w_data, "this is data: %d \0",i++);
+  flash_write_all_string(w_data);
+  sendData(&huart2,"Write\n");
+  rt_thread_mdelay(1000);
+  data=flash_read_all_string();
+  sprintf(data,"read data is: %s \n",data);
+  sendData(&huart2,data);
+  rt_thread_mdelay(1000);
+  }
 }
 /* USER CODE END 4 */
 

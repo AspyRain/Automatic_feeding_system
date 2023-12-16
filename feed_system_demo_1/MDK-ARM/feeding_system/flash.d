@@ -1,4 +1,4 @@
-feeding_system/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
+feeding_system/flash.o: ..\Core\Src\flash.c ..\Core\Src\flash.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h \
   ..\Core\Inc\stm32f1xx_hal_conf.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h \
@@ -27,17 +27,5 @@ feeding_system/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
-  ..\Core\Inc\i2c.h ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h \
-  ..\RT-Thread\rtconfig.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdebug.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdef.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdarg.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
-  ..\Core\Src\feeding.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h \
-  ..\Core\Src\flash.h
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h

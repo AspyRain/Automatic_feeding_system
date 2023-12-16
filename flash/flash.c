@@ -2,10 +2,10 @@
 #include "flash.h"
 
 
-// ²»¼ì²éµÄĞ´Èë
-// WriteAddr:ÆğÊ¼µØÖ·
-// pBuffer:  Êı¾İÖ¸Õë
-// NumToWrite:×Ö½ÚÊı
+// ä¸æ£€æŸ¥çš„å†™å…¥
+// WriteAddr:èµ·å§‹åœ°å€
+// pBuffer:  æ•°æ®æŒ‡é’ˆ
+// NumToWrite:å­—èŠ‚æ•°
 void FlashWriteNoCheck( uint32_t WriteAddr,uint8_t *pBuffer,uint16_t NumToWrite )
 {
     uint16_t i;
@@ -30,34 +30,34 @@ void FlashWriteBuff( const uint32_t destination_address, uint8_t *const buffer,u
 
     HAL_StatusTypeDef status = HAL_ERROR;
 
-    // µØÖ·¼ì²é
+    // åœ°å€æ£€æŸ¥
     if( (destination_address < FMC_FLASH_BASE) || ( destination_address + length >= FMC_FLASH_END) || (length <= 0) )
         return;
 
-    HAL_FLASH_Unlock();	// ½âËø
+    HAL_FLASH_Unlock();	// è§£é”
     do
     {
-        // ¶Á³öÒ»Ò³Êı¾İ
+        // è¯»å‡ºä¸€é¡µæ•°æ®
         for(i=0; i < FMC_SECTOR_SIZE; i += 4 )
             *(uint32_t *)(FlashBuff+i) = *(uint32_t *)(StartAddress+i);
 
-        // ĞŞ¸ÄÒª¸ÄÈëµÄÊı¾İ
+        // ä¿®æ”¹è¦æ”¹å…¥çš„æ•°æ®
         for ( i=0; (i+Offset)<FMC_SECTOR_SIZE && i< remaindNum; i++ )
             *(FlashBuff+Offset+i) = *(pBuf+i);
 
 
-        // ²Á³ıÒ»ROWÊı¾İ
+        // æ“¦é™¤ä¸€ROWæ•°æ®
         FLASH_PageErase( StartAddress );
 
-        // HAL¿â FLASH_PageEraseÓĞBUFF,Òª¼ÓÉÏÏÂÃæÈıĞĞ´úÂë
+        // HALåº“ FLASH_PageEraseæœ‰BUFF,è¦åŠ ä¸Šä¸‹é¢ä¸‰è¡Œä»£ç 
         while( status != HAL_OK )
             status = FLASH_WaitForLastOperation(FLASH_TIMEOUT_VALUE);
         CLEAR_BIT(FLASH->CR, FLASH_CR_PER);
 
-        // Ğ´ÈëÊı¾İ
+        // å†™å…¥æ•°æ®
         FlashWriteNoCheck( StartAddress,FlashBuff,FMC_SECTOR_SIZE );
 
-        // ÎªÏÂÒ»Ò³×ö×¼±¸
+        // ä¸ºä¸‹ä¸€é¡µåšå‡†å¤‡
         StartAddress +=  FMC_SECTOR_SIZE;
         remaindNum -= i;
         pBuf += i;
@@ -65,14 +65,14 @@ void FlashWriteBuff( const uint32_t destination_address, uint8_t *const buffer,u
 
     } while( remaindNum > 0 );
 
-    HAL_FLASH_Lock();  // ÉÏËø
+    HAL_FLASH_Lock();  // ä¸Šé”
 		
 }
 
 
 
 
-// ´ÓFLASHÖĞ¶ÁÖ¸¶¨³¤¶ÈÊı¾İ
+// ä»FLASHä¸­è¯»æŒ‡å®šé•¿åº¦æ•°æ®
 void FlashReadBuff(const uint32_t source_address,uint8_t *const buffer,uint16_t length)
 {
     uint16_t i;
@@ -80,17 +80,17 @@ void FlashReadBuff(const uint32_t source_address,uint8_t *const buffer,uint16_t 
     uint32_t StartAddress = source_address;
     uint16_t data;
 
-    // µØÖ·¼ì²â
+    // åœ°å€æ£€æµ‹
     if( source_address + length > FMC_FLASH_END ) return;
 
-    // Èç¹ûÃ»ÓĞ¶Ô16Æë
+    // å¦‚æœæ²¡æœ‰å¯¹16é½
     if( source_address & 1 )
     {
         Offset = 1;
         StartAddress = source_address-1;
     }
 
-    // flashµÄ²Ù×÷ÒªÇó16¶ÔÆë ×îĞ¡¶ÁĞ´²Ù×÷16¸ö±ÈÌØ
+    // flashçš„æ“ä½œè¦æ±‚16å¯¹é½ æœ€å°è¯»å†™æ“ä½œ16ä¸ªæ¯”ç‰¹
     if ( Offset )
     {
         data = *(uint16_t *)(StartAddress);
