@@ -118,16 +118,20 @@ int main(void)
   /* USER CODE END 2 */
   Esp01s_Init("AspyRain","Lxr20030106","8080");
   rt_thread_mdelay(3000);
-    rt_thread_t flash_thread = rt_thread_create("flash_test", flash_test, RT_NULL, 1024, 4, 10);
-  rt_thread_startup(flash_thread);
+  //  rt_thread_t flash_thread = rt_thread_create("flash_test", flash_test, RT_NULL, 2048, 4, 10);
+  //rt_thread_startup(flash_thread);
+ // flash_test();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-    /* USER CODE END WHILE */
-
-    rt_thread_mdelay(20);
-    /* USER CODE BEGIN 3 */
+  char* w_data = (char*)malloc(50);
+  int i=0;
+  while (1){
+  sprintf(w_data, "this is data: %d",i++);
+  flash_write_string(w_data);
+  rt_kprintf("Write\n");
+  rt_thread_mdelay(1000);
+  rt_kprintf("read data is : %s \n",flash_read_string());
+  rt_thread_mdelay(1000);
   }
   /* USER CODE END 3 */
 }
@@ -209,13 +213,14 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     
     usart1_rx_buffer[usart1_rx_index++] = usart1_c;
     
-    if (strstr(usart1_rx_buffer, "CLOSED")!=NULL) {
+    if (strstr((const char*)usart1_rx_buffer, "CLOSED") != NULL) {
       // 收到一条完整的指令
       
       usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
 
       // 在这里解析指令
-      parseAndProcessCommand(usart1_rx_buffer);
+      parseAndProcessCommand((char*)usart1_rx_buffer);
+
 
       // 清空接收缓冲区，准备接收下一条指令
       usart1_rx_index = 0;
@@ -263,19 +268,7 @@ char* extractData(const char* input) {
     return extractedData;
 }
 void flash_test(){
-  char* data;
-  char* w_data;
-  int i=0;
-  while (1){
-  sprintf(w_data, "this is data: %d \0",i++);
-  flash_write_all_string(w_data);
-  sendData(&huart2,"Write\n");
-  rt_thread_mdelay(1000);
-  data=flash_read_all_string();
-  sprintf(data,"read data is: %s \n",data);
-  sendData(&huart2,data);
-  rt_thread_mdelay(1000);
-  }
+
 }
 /* USER CODE END 4 */
 

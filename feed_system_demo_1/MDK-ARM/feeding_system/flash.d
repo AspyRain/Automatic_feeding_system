@@ -27,5 +27,4 @@ feeding_system/flash.o: ..\Core\Src\flash.c ..\Core\Src\flash.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h

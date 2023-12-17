@@ -82,9 +82,9 @@ void toggle_feed(int feedNum) {
 // 初始化喂食线程
 void feeding_init() {
     // 创建三个喂食线程
-    feeding_thread_1 = rt_thread_create("feeding1", feeding, (void*)1, 1024, 5, 10);
-    feeding_thread_2 = rt_thread_create("feeding2", feeding, (void*)2, 1024, 5, 10);
-    feeding_thread_3 = rt_thread_create("feeding3", feeding, (void*)3, 1024, 5, 10);
+    feeding_thread_1 = rt_thread_create("feeding1", feeding, (void*)1, 2048, 5, 10);
+    feeding_thread_2 = rt_thread_create("feeding2", feeding, (void*)2, 2048, 5, 10);
+    feeding_thread_3 = rt_thread_create("feeding3", feeding, (void*)3, 2048, 5, 10);
 
     // 启动三个喂食线程
     rt_thread_startup(feeding_thread_1);
