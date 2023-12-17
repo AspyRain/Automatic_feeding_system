@@ -117,7 +117,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
   Esp01s_Init("AspyRain","Lxr20030106","8080");
-  rt_thread_mdelay(3000);
+  rt_thread_mdelay(500);
   //  rt_thread_t flash_thread = rt_thread_create("flash_test", flash_test, RT_NULL, 2048, 4, 10);
   //rt_thread_startup(flash_thread);
  // flash_test();
@@ -196,6 +196,7 @@ void Esp01s_Init(char* ip, char* password, char* port) {
   // 重新启用USART1接收中断
   __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
   HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
+  rt_kprintf("初始化完成\n");
 }
 void sendData(UART_HandleTypeDef *huart, const char *str) {
   HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
