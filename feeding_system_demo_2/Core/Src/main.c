@@ -38,7 +38,7 @@
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
-
+#define WAIT_TIMEOUT_MS 5000 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
@@ -63,7 +63,6 @@ void SystemClock_Config(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-#define BUFFER_SIZE 200
 
 uint8_t usart1_c; 
 uint8_t usart2_c; 
@@ -75,7 +74,8 @@ uint8_t usart1_rx_buffer[BUFFER_SIZE];
 uint8_t usart1_rx_index = 0;
 
 int feedNumFlag = 0;
-
+int esp_flag=0;//判断esp是否就绪
+int timeout_flag=0;
 
 void Esp01s_Init(char* ip, char* password, char* port);
 void sendData(UART_HandleTypeDef *huart, const char *str);
@@ -83,6 +83,7 @@ void parseAndProcessCommand(char *command);
 char* extractData(const char* input) ;
 void flash_test();
 void parse_json(void *promt) ;
+void wait_for_esp(char* key);
 /* USER CODE END 0 */
 
 /**
@@ -116,7 +117,7 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-
+  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
   Esp01s_Init("AspyRain","Lxr20030106","8080");
@@ -166,36 +167,67 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
+
+
+void wait_for_esp(char* key) {
+  if (key == NULL) {
+    return;
+  }
+
+  uint32_t start_time = rt_tick_get();
+  while (rt_tick_get() - start_time < WAIT_TIMEOUT_MS) {
+    // Check if the key is present in the received data
+    if (strstr((const char *)usart1_rx_buffer, key) != NULL) {
+      // Key found, reset the buffer and return
+      usart1_rx_index = 0;
+      memset(usart1_rx_buffer, 0, sizeof(usart1_rx_buffer));
+      return;
+    }
+    
+    // Wait for a short duration before checking again
+    rt_thread_mdelay(30);
+  }
+  timeout_flag=1;
+  rt_kprintf("Timeout waiting for response: %s\n", key);
+}
 void Esp01s_Init(char* ip, char* password, char* port) {
-  // 禁用USART1接收中断
-  __HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
 
   char command[50];
   // 发送初始化指令到ESP01S
-	sendData(&huart1,"AT+RST");
-	rt_thread_mdelay(2000);  // 等待一段时间
-	sendData(&huart1,"AT+CWMODE=1");
-	rt_thread_mdelay(2000);  // 等待一段时间
+	sendData(&huart1,"AT+RST\r\n");
+  wait_for_esp("OK");  // 等待一段时间
+  rt_thread_mdelay(2000);
+
+	sendData(&huart1,"AT+CWMODE=1\r\n");
+	if (timeout_flag==0)wait_for_esp("OK");  // 等待一段时间
+
   sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
   sendData(&huart1, command);
-  rt_thread_mdelay(1000);  // 等待一段时间
+	if (timeout_flag==0)wait_for_esp("OK");  // 等待一段时间
 
   sprintf(command, "AT+CIPMUX=1\r\n");
   sendData(&huart1, command);
-  rt_thread_mdelay(1000);
+  if (timeout_flag==0)wait_for_esp("OK"); 
 
   sprintf(command, "AT+CIPSERVER=1,%s\r\n", port);
   sendData(&huart1, command);
-  rt_thread_mdelay(1000);
+  if (timeout_flag==0)wait_for_esp("OK"); 
+  esp_flag=1;
+  if (timeout_flag==0){
   HAL_GPIO_WritePin(esp_enable_flag_GPIO_Port, esp_enable_flag_Pin, GPIO_PIN_SET);
-
   // 清空接收缓冲区
   huart1.Instance->DR; // 读取数据寄存器，将接收缓冲区中的数据清空
-
   // 重新启用USART1接收中断
-  __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
   rt_kprintf("初始化完成\n");
+  }else {
+    while (1)
+    {
+      /* code */
+      HAL_GPIO_TogglePin(esp_enable_flag_GPIO_Port,esp_enable_flag_Pin);
+      rt_thread_mdelay(500);
+    }
+    
+  }
 }
 void sendData(UART_HandleTypeDef *huart, const char *str) {
   HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
@@ -204,18 +236,20 @@ void sendData(UART_HandleTypeDef *huart, const char *str) {
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   if (huart == &huart1) {
-      
-    // 在这里处理接收到的数据
-    if (usart1_c == '+') {
+    if (usart1_rx_index>=BUFFER_SIZE-1){
+      memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
+      usart1_rx_index=0;
+    }
+    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
+     if (esp_flag==1){
+        if (usart1_c == '+') {
       // 开始接收一条新指令
       usart1_rx_index = 0;
+      usart1_rx_buffer[usart1_rx_index++] = usart1_c;
     }
-    
-    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
     
     if (strstr((const char*)usart1_rx_buffer, "CLOSED") != NULL) {
       // 收到一条完整的指令
-      
       usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
 
       // 在这里解析指令
@@ -226,6 +260,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
       usart1_rx_index = 0;
       memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
     }
+      }
     // 继续启动下一次接收
       HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
 
@@ -262,7 +297,6 @@ while (1){
 
 void parseAndProcessCommand(char *command) {
   // 在这里解析和处理指令
-
   if (command != NULL) {
     char* data=extractData(command);
     // 在这里处理提取出的值
