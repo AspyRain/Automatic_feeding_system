@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "rtthread.h": "c"
+        "rtthread.h": "c",
+        "data_structure.h": "c"
     }
 }
