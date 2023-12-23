@@ -6,6 +6,7 @@
     <color name="button_green_clicked">#324849</color>
     <color name="bar_green">#DCDCC3</color>
     <color name="frag_back">#95A280</color>
+    <color name="main_bg">#F0F0F0</color>
     <color name="theme_green_3">#93A37F</color>
     <color name="theme_green_4">#0B0B0A</color>
 </resources>

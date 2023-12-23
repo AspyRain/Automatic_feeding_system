@@ -3,7 +3,7 @@
     <item>
         <shape android:shape="rectangle">
             <corners android:radius="20dp" /> <!-- 设置圆角半径，可以根据需要调整 -->
-            <solid android:color="@color/button_green" /> <!-- 设置背景颜色 -->
+            <solid android:color="@color/button_green_clicked" /> <!-- 设置背景颜色 -->
         </shape>
     </item>
 </layer-list>

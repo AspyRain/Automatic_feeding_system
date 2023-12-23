@@ -19,9 +19,10 @@ public class Load extends AppCompatActivity {
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                button_clicked(enterButton);
                 Intent mainIntent = new Intent(Load.this, MainActivity.class); //前者为跳转前页面，后者为跳转后页面
                 Load.this.startActivity(mainIntent);
-                button_clicked(enterButton);
+
             }
         });
     }
@@ -35,7 +36,7 @@ public class Load extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        button.setBackgroundResource(R.drawable.rounded_corners_button_clicked);
+                        button.setBackgroundResource(R.drawable.rounded_corners_button);
                     }
                 });
 
@@ -50,7 +51,7 @@ public class Load extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        button.setBackgroundResource(R.drawable.rounded_corners_button);
+                        button.setBackgroundResource(R.drawable.rounded_corners_button_clicked);
                     }
                 });
             }
