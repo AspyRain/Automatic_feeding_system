@@ -166,14 +166,15 @@ void InitTIMER()
   Date *date_ = newDate(2023, 6, 1);
   Time *time_ = newTime(12, 4, 30);
   // 创建一些测试计划
-  Plan *plans_ = (Plan *)malloc(0 * sizeof(Plan));
-  insertPlan(plans_,1,1,*newTime(12,5,0),10,*newDate(2023,1,1),*newDate(2023,12,31));
-  insertPlan(plans_,2,2,*newTime(13,5,0),10,*newDate(2023,6,1),*newDate(2023,6,30));
-rt_kprintf("Plan1: beginDate:%d-%d-%d,endDate:%d-%d-%d,time:%d:%d:%d\n{", plans_[0].beginDate.year, plans_[0].beginDate.month, plans_[0].beginDate.day,plans_[0].endDate.year, plans_[0].endDate.month, plans_[0].endDate.day ,plans_[0].time.h, plans_[0].time.m,plans_[0].time.s);
-rt_kprintf("Plan2: beginDate:%d-%d-%d,endDate:%d-%d-%d,time:%d:%d:%d\n{", plans_[1].beginDate.year, plans_[1].beginDate.month, plans_[1].beginDate.day,plans_[1].endDate.year, plans_[1].endDate.month, plans_[1].endDate.day ,plans_[1].time.h, plans_[1].time.m,plans_[1].time.s);
+    Plan* plans = NULL;
+    insertPlan(&plans, 1, 1, *newTime(12, 5, 0), 10, *newDate(2023, 1, 1), *newDate(2023, 12, 31));
+    insertPlan(&plans, 2, 2, *newTime(13, 5, 0), 10, *newDate(2023, 6, 1), *newDate(2023, 6, 30));
+rt_kprintf("Plan1: beginDate:%d-%d-%d,endDate:%d-%d-%d,time:%d:%d:%d\n", plans[0].beginDate.year, plans[0].beginDate.month, plans[0].beginDate.day,plans[0].endDate.year, plans[0].endDate.month, plans[0].endDate.day ,plans[0].time.h, plans[0].time.m,plans[0].time.s);
+rt_kprintf("Plan2: beginDate:%d-%d-%d,endDate:%d-%d-%d,time:%d:%d:%d\n", plans[1].beginDate.year, plans[1].beginDate.month, plans[1].beginDate.day,plans[1].endDate.year, plans[1].endDate.month, plans[1].endDate.day ,plans[1].time.h, plans[1].time.m,plans[1].time.s);
 rt_kprintf("timerInit\n");
-  timerInit(date_, time_, plans_);  // 传递计划的数量
+  timerInit(date_, time_, plans);  // 传递计划的数量
 rt_kprintf("timerInit_ok\n");
+free(plans);
 }
 /* USER CODE END 4 */
 

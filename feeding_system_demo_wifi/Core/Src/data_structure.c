@@ -1,6 +1,7 @@
 #include "data_structure.h"
 #include <stdlib.h>
-
+#include "rtthread.h"
+#include "timer.h"
 // 初始化结构体数据
 void setDate(Date *date, int year, int month, int day) {
     date->year = year;
@@ -29,9 +30,8 @@ Time* newTime(int h, int m, int s) {
     }
     return time;
 }
-void insertPlan(Plan* plans,int id, int device, Time time, int duration, Date beginDate, Date endDate) {
-    // Allocate memory for a new plan
-    int planSize=sizeof(plans)/sizeof(Plan);
+void insertPlan(Plan** plans, int id, int device, Time time, int duration, Date beginDate, Date endDate) {
+    // 为新计划分配内存
     Plan newPlan;
     newPlan.id = id;
     newPlan.device = device;
@@ -39,6 +39,16 @@ void insertPlan(Plan* plans,int id, int device, Time time, int duration, Date be
     newPlan.duration = duration;
     newPlan.beginDate = beginDate;
     newPlan.endDate = endDate;
-    plans = realloc(plans, planSize * sizeof(Plan));
-    plans[planSize] = newPlan;
+
+    // 调整 plans 数组的大小
+    *plans = realloc(*plans, (planCount + 1) * sizeof(Plan));
+
+    if (*plans != NULL) {
+        // 添加新计划
+        (*plans)[planCount] = newPlan;
+        (planCount)++;
+    } else {
+        // 处理内存分配失败
+        // 您可能希望记录错误或采取适当的措施
+    }
 }

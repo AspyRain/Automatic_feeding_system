@@ -3,9 +3,9 @@
 <title>Static Call Graph - [feeding_system\feeding_system.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image feeding_system\feeding_system.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6190004: Last Updated: Sun Dec 24 21:51:20 2023
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6190004: Last Updated: Sun Dec 24 22:20:40 2023
 <BR><P>
-<H3>Maximum Stack Usage =        316 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        324 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 main_thread_entry &rArr; $Super$$main &rArr; InitTIMER &rArr; rt_kprintf &rArr; rt_vsnprintf &rArr; print_number
 <P>
@@ -479,16 +479,25 @@ Global Symbols
 <LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timerInit
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;newTime
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;newDate
-<LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitTIMER
-<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
 </UL>
 
-<P><STRONG><a name="[60]"></a>realloc</STRONG> (Thumb, 196 bytes, Stack size 16 bytes, h1_realloc.o(.text))
+<P><STRONG><a name="[60]"></a>free</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, h1_free.o(.text))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = free
+</UL>
+<BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_heap_descriptor
+</UL>
+<BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitTIMER
+<LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__Heap_ProvideMemory
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
+</UL>
+
+<P><STRONG><a name="[61]"></a>realloc</STRONG> (Thumb, 196 bytes, Stack size 16 bytes, h1_realloc.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = realloc &rArr; malloc &rArr; __Heap_Full &rArr; __Heap_ProvideMemory &rArr; free
 </UL>
 <BR>[Calls]<UL><LI><a href="#[62]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy4
-<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 <LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_heap_descriptor
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
 </UL>
 <BR>[Called By]<UL><LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;insertPlan
@@ -556,9 +565,9 @@ Global Symbols
 <P><STRONG><a name="[101]"></a>__rt_heap_expand</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, heapauxi.o(.text), UNUSED)
 
 <P><STRONG><a name="[5e]"></a>__rt_heap_descriptor</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, rt_heap_descriptor_intlibspace.o(.text))
-<BR><BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
-<LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_init_alloc
-<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
+<BR><BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_init_alloc
+<LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 <LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
 </UL>
 
@@ -599,19 +608,10 @@ Global Symbols
 
 <P><STRONG><a name="[106]"></a>__Heap_DescSize</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, h1_init.o(.text), UNUSED)
 
-<P><STRONG><a name="[61]"></a>free</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, h1_free.o(.text))
-<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = free
-</UL>
-<BR>[Calls]<UL><LI><a href="#[5e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_heap_descriptor
-</UL>
-<BR>[Called By]<UL><LI><a href="#[66]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__Heap_ProvideMemory
-<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
-</UL>
-
 <P><STRONG><a name="[62]"></a>__aeabi_memcpy4</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = __aeabi_memcpy4
 </UL>
-<BR>[Called By]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
+<BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
 </UL>
 
 <P><STRONG><a name="[107]"></a>__aeabi_memcpy8</STRONG> (Thumb, 0 bytes, Stack size 8 bytes, rt_memcpy_w.o(.text), UNUSED)
@@ -631,7 +631,7 @@ Global Symbols
 <P><STRONG><a name="[66]"></a>__Heap_ProvideMemory</STRONG> (Thumb, 52 bytes, Stack size 0 bytes, h1_extend.o(.text))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = __Heap_ProvideMemory &rArr; free
 </UL>
-<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
+<BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 </UL>
 <BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;_init_alloc
 <LI><a href="#[5f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__Heap_Full
@@ -927,15 +927,15 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
 </UL>
 
-<P><STRONG><a name="[94]"></a>InitTIMER</STRONG> (Thumb, 324 bytes, Stack size 72 bytes, main.o(.text.InitTIMER))
-<BR><BR>[Stack]<UL><LI>Max Depth = 228<LI>Call Chain = InitTIMER &rArr; rt_kprintf &rArr; rt_vsnprintf &rArr; print_number
+<P><STRONG><a name="[94]"></a>InitTIMER</STRONG> (Thumb, 336 bytes, Stack size 80 bytes, main.o(.text.InitTIMER))
+<BR><BR>[Stack]<UL><LI>Max Depth = 236<LI>Call Chain = InitTIMER &rArr; rt_kprintf &rArr; rt_vsnprintf &rArr; print_number
 </UL>
 <BR>[Calls]<UL><LI><a href="#[99]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;timerInit
 <LI><a href="#[98]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;insertPlan
 <LI><a href="#[97]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;newTime
 <LI><a href="#[96]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;newDate
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_kprintf
-<LI><a href="#[5d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;malloc
+<LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;free
 </UL>
 <BR>[Called By]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
 </UL>
@@ -1091,10 +1091,10 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> cmd.o(FSymTab)
 </UL>
-<P><STRONG><a name="[98]"></a>insertPlan</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, data_structure.o(.text.insertPlan))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = insertPlan &rArr; realloc &rArr; malloc &rArr; __Heap_Full &rArr; __Heap_ProvideMemory &rArr; free
+<P><STRONG><a name="[98]"></a>insertPlan</STRONG> (Thumb, 116 bytes, Stack size 24 bytes, data_structure.o(.text.insertPlan))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = insertPlan &rArr; realloc &rArr; malloc &rArr; __Heap_Full &rArr; __Heap_ProvideMemory &rArr; free
 </UL>
-<BR>[Calls]<UL><LI><a href="#[60]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
+<BR>[Calls]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;realloc
 </UL>
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitTIMER
 </UL>
@@ -1145,7 +1145,7 @@ Global Symbols
 <LI> cmd.o(FSymTab)
 </UL>
 <P><STRONG><a name="[b2]"></a>$Super$$main</STRONG> (Thumb, 232 bytes, Stack size 72 bytes, main.o(.text.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 300 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 308 + Unknown Stack Size
 <LI>Call Chain = $Super$$main &rArr; InitTIMER &rArr; rt_kprintf &rArr; rt_vsnprintf &rArr; print_number
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_thread_mdelay
@@ -1168,7 +1168,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[37]"></a>main_thread_entry</STRONG> (Thumb, 50 bytes, Stack size 16 bytes, components.o(.text.main_thread_entry))
-<BR><BR>[Stack]<UL><LI>Max Depth = 316 + Unknown Stack Size
+<BR><BR>[Stack]<UL><LI>Max Depth = 324 + Unknown Stack Size
 <LI>Call Chain = main_thread_entry &rArr; $Super$$main &rArr; InitTIMER &rArr; rt_kprintf &rArr; rt_vsnprintf &rArr; print_number
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;$Super$$main
@@ -1668,8 +1668,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[94]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitTIMER
 </UL>
 
-<P><STRONG><a name="[b5]"></a>timerRun</STRONG> (Thumb, 88 bytes, Stack size 8 bytes, timer.o(.text.timerRun))
-<BR><BR>[Stack]<UL><LI>Max Depth = 164 + Unknown Stack Size
+<P><STRONG><a name="[b5]"></a>timerRun</STRONG> (Thumb, 260 bytes, Stack size 64 bytes, timer.o(.text.timerRun))
+<BR><BR>[Stack]<UL><LI>Max Depth = 220 + Unknown Stack Size
 <LI>Call Chain = timerRun &rArr; rt_kprintf &rArr; rt_vsnprintf &rArr; print_number
 </UL>
 <BR>[Calls]<UL><LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;rt_kprintf

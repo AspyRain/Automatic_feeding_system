@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "rtthread.h"
 Timer *timerData = NULL; 
+int planCount=0;
 int timerInit(Date *now_date,Time *now_time,Plan *now_plan){
     
         // 在运行时动态分配内存给 Timer 对象
@@ -71,20 +72,20 @@ int timerRun(int deviceNum,int *device_status){
         result=0;
     }
     Plan* plans=timerData->plans;
-	int plansNum=sizeof(plans);
-    int planNum=sizeof(Plan);
+	int plansNum=planCount;
+    int planNum=planCount;
     //判断是否有设备到喂食时间
     rt_kprintf("plansNum:%d\nplanNum:%d\n",plansNum,planNum);
-    // for (int i=0;i<planNum;i++){
-    //     if (isTimeReached(&plans[i])==1){
-    //        device_status[timerData->plans[i].device]=1; 
-    //        result=1;
-    //     }
-    // }
+    for (int i=0;i<planNum;i++){
+        if (isTimeReached(&plans[i])==1){
+           device_status[timerData->plans[i].device]=1; 
+           result=1;
+        }
+    }
     return result;
 }
 int isTimeReached(const Plan *plan) {
-    rt_kprintf("Plan %d : beginDate:%d-%d-%d,endDate:%d-%d-%d\n{", plan->beginDate.year, plan->beginDate.month, plan->beginDate.day,plan->endDate.year, plan->endDate.month, plan->endDate.day);
+    rt_kprintf("Plan %d : beginDate:%d-%d-%d,endDate:%d-%d-%d\n{", plan->id,plan->beginDate.year, plan->beginDate.month, plan->beginDate.day,plan->endDate.year, plan->endDate.month, plan->endDate.day);
     // Check if the current date is within the plan's begin and end date
     if (
         (timerData->date->month>plan->beginDate.month||(timerData->date->month==plan->beginDate.month&&timerData->date->day>=plan->beginDate.day))

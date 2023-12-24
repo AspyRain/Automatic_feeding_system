@@ -40,10 +40,11 @@ typedef struct {
     Record* records;
 } DataStructure;
 
+
 // 函数声明
 void setDate(Date *date,int year,int month,int day);
 void setTime(Time *time,int h,int m,int s);
 Date* newDate(int year,int month,int day);
 Time* newTime(int h,int m,int s);
-void insertPlan(Plan* plans,int id,int device,Time time,int duration,Date beginDate,Date endDate);
+void insertPlan(Plan** plans, int id, int device, Time time, int duration, Date beginDate, Date endDate);
 #endif /* DATA_STRUCTURE_H */

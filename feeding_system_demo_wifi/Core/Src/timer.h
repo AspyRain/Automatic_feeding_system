@@ -13,7 +13,7 @@ typedef struct
 } Timer;
 
 extern Timer *timerData;  
-
+extern int planCount;
 int timerInit(Date *now_date, Time *now_time, Plan *now_plan);
 void setTimerAll(Date *now_date, Time *now_time, Plan *now_plan);
 void setTimerDate(Date *now_date);
