@@ -54,8 +54,9 @@ int* timer(int deviceNum){
         }
         return device_status;
     }
+		int planNum=(int)sizeof(plans)/sizeof(Plan);
     //判断是否有设备到喂食时间
-    for (int i=0;i<sizeof(plans)/sizeof(Plan);i++){
+    for (int i=0;i<planNum;i++){
         if (isTimeReached(&plans[i]))
         device_status[plans[i].device]=1;
     }
