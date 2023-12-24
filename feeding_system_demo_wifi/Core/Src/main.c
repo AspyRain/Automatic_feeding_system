@@ -29,6 +29,8 @@
 #include "stdio.h"
 #include "string.h"
 #include "stdlib.h"
+#include "data_structure.h"
+#include "timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,23 +63,7 @@ void SystemClock_Config(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 #define BUFFER_SIZE 200
-
-uint8_t usart1_c; 
-uint8_t usart2_c; 
-
-uint8_t usart2_rx_buffer[BUFFER_SIZE];
-uint8_t usart2_rx_index = 0;
-
-uint8_t usart1_rx_buffer[BUFFER_SIZE];
-uint8_t usart1_rx_index = 0;
-
-int feedNumFlag = 0;
-
-void Esp01s_Init(char* ip, char* password, char* port);
-void sendData(UART_HandleTypeDef *huart, const char *str);
-void parseAndProcessCommand(char *command);
-void controller(void *promt);
-char* extractData(const char *inputString) ;
+void InitTIMER();
 /* USER CODE END 0 */
 
 /**
@@ -113,16 +99,26 @@ int main(void)
   
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
-  Esp01s_Init("AspyRain","Lxr20030106","8080");
 
 
+        int *device_status = (int *)malloc(2 * sizeof(int));
+        InitTIMER();
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
 
-    rt_thread_mdelay(20);
+      rt_kprintf("Current date: %d-%02d-%02d, %02d:%02d:%02d\n{", getTimerDate()->year, getTimerDate()->month, getTimerDate()->day, getTimerTime()->h, getTimerTime()->m, getTimerTime()->s);
+      
+      int result=timerRun(2,device_status);
+      rt_kprintf("result:%d\n",result);
+      for (int j = 0; j < 2; j++) {
+            rt_kprintf("%d,", device_status[j]);
+        }
+        
+        rt_kprintf("}\n");
+      rt_thread_mdelay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -163,96 +159,21 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-void Esp01s_Init(char* ip, char* password, char* port) {
-  // 禁用USART1接收中断
-  __HAL_UART_DISABLE_IT(&huart1, UART_IT_RXNE);
 
-  char command[50];
-  // 发送初始化指令到ESP01S
-  sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
-  sendData(&huart1, command);
-  rt_thread_mdelay(1000);  // 等待一段时间
-
-  sprintf(command, "AT+CIPMUX=1\r\n");
-  sendData(&huart1, command);
-  rt_thread_mdelay(1000);
-
-  sprintf(command, "AT+CIPSERVER=1,%s\r\n", port);
-  sendData(&huart1, command);
-  rt_thread_mdelay(2000);
-	rt_kprintf("初始化完成\n");
-
-  // 清空接收缓冲区
-  huart1.Instance->DR; // 读取数据寄存器，将接收缓冲区中的数据清空
-
-  // 重新启用USART1接收中断
-  __HAL_UART_ENABLE_IT(&huart1, UART_IT_RXNE);
-  HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
-}
-void sendData(UART_HandleTypeDef *huart, const char *str) {
-  HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
-}
-
-
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-  if (huart == &huart1) {
-      
-    // 在这里处理接收到的数据
-    if (usart1_c == '+') {
-      // 开始接收一条新指令
-      usart1_rx_index = 0;
-    }
-    
-    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
-    
-    if (strstr((char*)usart1_rx_buffer, "CLOSED")!=NULL) {
-      // 收到一条完整的指令
-      
-      usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
-
-      // 在这里解析指令
-      parseAndProcessCommand((char*)usart1_rx_buffer);
-
-      // 清空接收缓冲区，准备接收下一条指令
-      usart1_rx_index = 0;
-      memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
-    }
-    // 继续启动下一次接收
-      HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
-
-  }
-
-}
-
-void parseAndProcessCommand(char *command) {
-  // 在这里解析和处理指令
-  if (command != NULL) {
-		char* data=extractData(command);
-		rt_kprintf("get_wifi_data:");
-		rt_kprintf(data);
-		rt_kprintf("\n");
-  }
-}
-
-char* extractData(const char* input) {
-    // 找到真正数据的起始位置
-    const char* dataStart = strstr(input, ":");
-    if (dataStart == NULL) {
-        // 如果没有找到冒号，返回空指针表示失败
-        return NULL;
-    }
-
-    // 获取真正数据的长度
-    int dataLength = atoi(input + 7);
-
-    // 分配足够的空间来存储真正数据
-    char* extractedData = (char*)malloc((dataLength + 1) * sizeof(char));
-
-    // 复制真正数据到提取的字符串中
-    strncpy(extractedData, dataStart + 1, dataLength);
-    extractedData[dataLength] = '\0'; // 添加字符串终止符
-
-    return extractedData;
+void InitTIMER()
+{
+  rt_kprintf( "InitTIMER\n");
+  Date *date_ = newDate(2023, 6, 1);
+  Time *time_ = newTime(12, 4, 30);
+  // 创建一些测试计划
+  Plan *plans_ = (Plan *)malloc(0 * sizeof(Plan));
+  insertPlan(plans_,1,1,*newTime(12,5,0),10,*newDate(2023,1,1),*newDate(2023,12,31));
+  insertPlan(plans_,2,2,*newTime(13,5,0),10,*newDate(2023,6,1),*newDate(2023,6,30));
+rt_kprintf("Plan1: beginDate:%d-%d-%d,endDate:%d-%d-%d,time:%d:%d:%d\n{", plans_[0].beginDate.year, plans_[0].beginDate.month, plans_[0].beginDate.day,plans_[0].endDate.year, plans_[0].endDate.month, plans_[0].endDate.day ,plans_[0].time.h, plans_[0].time.m,plans_[0].time.s);
+rt_kprintf("Plan2: beginDate:%d-%d-%d,endDate:%d-%d-%d,time:%d:%d:%d\n{", plans_[1].beginDate.year, plans_[1].beginDate.month, plans_[1].beginDate.day,plans_[1].endDate.year, plans_[1].endDate.month, plans_[1].endDate.day ,plans_[1].time.h, plans_[1].time.m,plans_[1].time.s);
+rt_kprintf("timerInit\n");
+  timerInit(date_, time_, plans_);  // 传递计划的数量
+rt_kprintf("timerInit_ok\n");
 }
 /* USER CODE END 4 */
 
