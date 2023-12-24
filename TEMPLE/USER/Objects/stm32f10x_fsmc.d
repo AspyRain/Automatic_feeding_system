@@ -1,12 +1,9 @@
-.\objects\stm32f10x_fsmc.o: ..\FWlib\src\stm32f10x_fsmc.c
-.\objects\stm32f10x_fsmc.o: ..\FWlib\inc\stm32f10x_fsmc.h
-.\objects\stm32f10x_fsmc.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
-.\objects\stm32f10x_fsmc.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
-.\objects\stm32f10x_fsmc.o: E:\keil\ARM\ARMCC\bin\..\include\stdint.h
-.\objects\stm32f10x_fsmc.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\system_stm32f10x.h
-.\objects\stm32f10x_fsmc.o: ..\USER\stm32f10x_conf.h
-.\objects\stm32f10x_fsmc.o: ..\FWlib\inc\stm32f10x_gpio.h
-.\objects\stm32f10x_fsmc.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
-.\objects\stm32f10x_fsmc.o: ..\FWlib\inc\stm32f10x_rcc.h
-.\objects\stm32f10x_fsmc.o: ..\FWlib\inc\stm32f10x_usart.h
-.\objects\stm32f10x_fsmc.o: ..\FWlib\inc\misc.h
+./objects/stm32f10x_fsmc.o: ..\FWlib\src\stm32f10x_fsmc.c \
+  ..\FWlib\inc\stm32f10x_fsmc.h \
+  D:\software\Keil\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include\stm32f10x.h \
+  ..\CMSIS\CM3\CoreSupport\core_cm3.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  D:\software\Keil\Packs\Keil\STM32F1xx_DFP\2.3.0\Device\Include\system_stm32f10x.h \
+  ..\USER\stm32f10x_conf.h ..\FWlib\inc\stm32f10x_gpio.h \
+  ..\FWlib\inc\stm32f10x_rcc.h ..\FWlib\inc\stm32f10x_usart.h \
+  ..\FWlib\inc\misc.h

@@ -56,7 +56,7 @@ int main(void)
 				printf("Second Stage Verify Failed\n");
 			else if(j==4)//解码成功
 			{
-				printf("%d 年 ", DATA[7]+2000);//年
+				printf("%d 年 ",DATA[7]+2000);//年
 				printf("%d 月", DATA[6]);     //月
 				printf("%d 日", DATA[5]);     //日
 				printf("%d 时", DATA[4] ? (DATA[1] + 12) : DATA[1]); //时,24小时制
@@ -86,8 +86,6 @@ int main(void)
 					case 7:
 						printf(" 星期日\n ");
 					break;
-				
-				
 				}
 			}
 		}
