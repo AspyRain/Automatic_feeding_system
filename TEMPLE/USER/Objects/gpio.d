@@ -1,0 +1,13 @@
+.\objects\gpio.o: GPIO\GPIO.c
+.\objects\gpio.o: GPIO\GPIO.h
+.\objects\gpio.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
+.\objects\gpio.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
+.\objects\gpio.o: E:\keil\ARM\ARMCC\bin\..\include\stdint.h
+.\objects\gpio.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\system_stm32f10x.h
+.\objects\gpio.o: ..\USER\stm32f10x_conf.h
+.\objects\gpio.o: ..\FWlib\inc\stm32f10x_gpio.h
+.\objects\gpio.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
+.\objects\gpio.o: ..\FWlib\inc\stm32f10x_rcc.h
+.\objects\gpio.o: ..\FWlib\inc\stm32f10x_usart.h
+.\objects\gpio.o: ..\FWlib\inc\misc.h
+.\objects\gpio.o: ..\USER\define.h

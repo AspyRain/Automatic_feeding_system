@@ -1,0 +1,13 @@
+.\objects\bpc_decode.o: BPC_DECODE\BPC_DECODE.c
+.\objects\bpc_decode.o: BPC_DECODE\BPC_DECODE.h
+.\objects\bpc_decode.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
+.\objects\bpc_decode.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
+.\objects\bpc_decode.o: E:\keil\ARM\ARMCC\bin\..\include\stdint.h
+.\objects\bpc_decode.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\system_stm32f10x.h
+.\objects\bpc_decode.o: ..\USER\stm32f10x_conf.h
+.\objects\bpc_decode.o: ..\FWlib\inc\stm32f10x_gpio.h
+.\objects\bpc_decode.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
+.\objects\bpc_decode.o: ..\FWlib\inc\stm32f10x_rcc.h
+.\objects\bpc_decode.o: ..\FWlib\inc\stm32f10x_usart.h
+.\objects\bpc_decode.o: ..\FWlib\inc\misc.h
+.\objects\bpc_decode.o: ..\USER\define.h

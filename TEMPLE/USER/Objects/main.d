@@ -1,0 +1,17 @@
+.\objects\main.o: main.c
+.\objects\main.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
+.\objects\main.o: ..\CMSIS\CM3\CoreSupport\core_cm3.h
+.\objects\main.o: E:\keil\ARM\ARMCC\bin\..\include\stdint.h
+.\objects\main.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\system_stm32f10x.h
+.\objects\main.o: ..\USER\stm32f10x_conf.h
+.\objects\main.o: ..\FWlib\inc\stm32f10x_gpio.h
+.\objects\main.o: E:\keil\ARM\PACK\Keil\STM32F1xx_DFP\1.0.4\Device\Include\stm32f10x.h
+.\objects\main.o: ..\FWlib\inc\stm32f10x_rcc.h
+.\objects\main.o: ..\FWlib\inc\stm32f10x_usart.h
+.\objects\main.o: ..\FWlib\inc\misc.h
+.\objects\main.o: define.h
+.\objects\main.o: .\USART\USART.h
+.\objects\main.o: E:\keil\ARM\ARMCC\bin\..\include\stdio.h
+.\objects\main.o: .\GPIO\GPIO.h
+.\objects\main.o: .\Sys_Tick\Sys_Tick.h
+.\objects\main.o: .\BPC_DECODE\BPC_DECODE.h
