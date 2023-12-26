@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String message="{status:2,detail:{device:"+deviceNum+"}}";
             String ip = ip_text.getText().toString();
             int port = Integer.parseInt(port_text.getText().toString());
-            espUtil.setIp(ip);
+          //  espUtil.setIp(ip);
             espUtil.setPort(port);
             espUtil.sendMessage(deviceNum.toString(),this,true);
         }
@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 messageModeFlag=true;
                 String ip = ip_text.getText().toString();
                 int port = Integer.parseInt(port_text.getText().toString());
-                espUtil.setIp(ip);
+                //espUtil.setIp(ip);
                 espUtil.setPort(port);
                 espUtil.startReceivingData();
 
