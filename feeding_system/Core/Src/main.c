@@ -53,12 +53,14 @@
 
 /* USER CODE BEGIN PV */
 
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void parseAndProcessCommand(char *command) ;
 void processJson(const char *jsonString) ;
+void reciveData();
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -66,6 +68,9 @@ void processJson(const char *jsonString) ;
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 char usart1_c;
+int dataLen;
+char dataLenStr[dataMaxLen];
+char* realCommand;
 /* USER CODE END 0 */
 
 /**
@@ -161,7 +166,7 @@ void parseAndProcessCommand(char *command) {
     // 在这里处理提取出的值
     // 将提取出的值存储到全局变量中
     rt_kprintf("%s\n",command);
-    processJson(extractData(command));
+    processJson(command);
   }
 }
 void processJson(const char *jsonString) {
@@ -171,83 +176,112 @@ void processJson(const char *jsonString) {
     int duration;
     int beginYear, beginMonth, beginDay;
     int endYear, endMonth, endDay;
-    // // 使用sscanf进行简单的解析
-    // int parsedItems = sscanf(jsonString, "{status:%d,detail:{", &status);
-    //  rt_kprintf("jsonString: %s\n", jsonString);
-    // // 检查解析是否成功
-    // if (parsedItems != 1) {
-    //     // 解析失败，可以输出错误信息或进行其他处理
-    //     rt_kprintf("Error parsing JSON: %s\n", jsonString);
-    //     return;
-    // }
+    // 使用sscanf进行简单的解析
+    int parsedItems = sscanf(jsonString, "{status:%d,detail:{", &status);
+     rt_kprintf("jsonString: %s\n", jsonString);
+    // 检查解析是否成功
+    if (parsedItems != 1) {
+        // 解析失败，可以输出错误信息或进行其他处理
+        rt_kprintf("Error parsing JSON: %s\n", jsonString);
+        return;
+    }
 
-    // // 根据不同的status执行不同的操作
-    // switch (status) {
-    //     case 0:
-    //         // 类型0的处理
-    //         // 可以在这里执行查看计划的操作
-    //         break;
-    //     case 1: {
-    //         // 类型1的处理
-    //         // 使用sscanf解析详细信息
-    //         parsedItems = sscanf(jsonString, "{status:%*d,detail:{device:%d,Time:{h:%d,m:%d,s:%d},duration:%d,beginDate:{year:%d,month:%d,day:%d},endDate:{year:%d,month:%d,day:%d}}}",
-    //                &device, &h, &m, &s, &duration, &beginYear, &beginMonth, &beginDay, &endYear, &endMonth, &endDay);
+    // 根据不同的status执行不同的操作
+    switch (status) {
+        case 0:
+            // 类型0的处理
+            // 可以在这里执行查看计划的操作
+            break;
+        case 1: {
+            // 类型1的处理
+            // 使用sscanf解析详细信息
+            parsedItems = sscanf(jsonString, "{status:%*d,detail:{device:%d,Time:{h:%d,m:%d,s:%d},duration:%d,beginDate:{year:%d,month:%d,day:%d},endDate:{year:%d,month:%d,day:%d}}}",
+                   &device, &h, &m, &s, &duration, &beginYear, &beginMonth, &beginDay, &endYear, &endMonth, &endDay);
+            // 检查解析是否成功
+            if (parsedItems != 11) {
+                rt_kprintf("Error parsing JSON: %s\n", jsonString);
+                return;
+            }
 
-    //         // 检查解析是否成功
-    //         if (parsedItems != 11) {
-    //             rt_kprintf("Error parsing JSON: %s\n", jsonString);
-    //             return;
-    //         }
+            // 在这里执行新建计划的操作，你可以将解析得到的数据传递给相应的函数
+            insertPlan(&timerData->plans, device, *newTime(h, m, s) , duration, *newDate(beginYear, beginMonth, beginDay) ,*newDate(endYear, endMonth, endDay) );
+            break;
+        }
+        case 2: {
+            // 类型2的处理
+            // 使用sscanf解析详细信息
+            parsedItems = sscanf(jsonString, "{status:%*d,detail:{device:%d}}", &device);
 
-    //         // 在这里执行新建计划的操作，你可以将解析得到的数据传递给相应的函数
-    //         insertPlan(&timerData->plans, device, *newTime(h, m, s) , duration, *newDate(beginYear, beginMonth, beginDay) ,*newDate(endYear, endMonth, endDay) );
-    //         break;
-    //     }
-    //     case 2: {
-    //         // 类型2的处理
-    //         // 使用sscanf解析详细信息
-    //         parsedItems = sscanf(jsonString, "{status:%*d,detail:{device:%d}}", &device);
+            // 检查解析是否成功
+            if (parsedItems != 1) {
+                rt_kprintf("Error parsing JSON: %s\n", jsonString);
+                return;
+            }
 
-    //         // 检查解析是否成功
-    //         if (parsedItems != 1) {
-    //             rt_kprintf("Error parsing JSON: %s\n", jsonString);
-    //             return;
-    //         }
-
-    //         // 在这里执行启动投喂器的操作，你可以将解析得到的设备编号传递给相应的函数
-    //         if (device > 0 && device < 4) {
-    //             toggle_feed(device);
-    //         }
-    //         break;
-    //     }
-    // }
+            // 在这里执行启动投喂器的操作，你可以将解析得到的设备编号传递给相应的函数
+            if (device > 0 && device < 4) {
+                toggle_feed(device);
+            }
+            break;
+        }
+    }
 }
-
+void reciveData(){
+  if (usart1_rx_index==-1)usart1_rx_index++;
+  else {
+if (esp_command_flag==0){
+    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
+  }else if (esp_command_flag==1){
+    if (usart1_rx_index<dataMaxLen){
+      dataLenStr[usart1_rx_index++]=usart1_c;
+    }else {
+      rt_kprintf("data too long!\n");
+    }
+  }else if (esp_command_flag==2){
+    if (usart1_rx_index<dataLen){
+      realCommand[usart1_rx_index++]=usart1_c;
+    }else {
+      rt_kprintf("data error!\n");
+    }
+  }
+  }
+}
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
   if (huart == &huart1) {
+    if (esp_command_flag==3)esp_command_flag=0;
     if (usart1_rx_index>=BUFFER_SIZE-1){
       memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
       usart1_rx_index=0;
     }
-    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
-     if (esp_flag==1){
+    if (esp_flag==1){
         if (usart1_c == '+') {
       // 开始接收一条新指令
+      memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
       usart1_rx_index = 0;
-      usart1_rx_buffer[usart1_rx_index++] = usart1_c;
-    }
-    
-    if (strstr((const char*)usart1_rx_buffer, "CLOSED") != NULL) {
-      // 收到一条完整的指令
-      usart1_rx_buffer[usart1_rx_index] = '\0'; // 添加字符串结束符
-      // 在这里解析指令
-      parseAndProcessCommand((char*)usart1_rx_buffer);
-
+      }else if (strstr((const char*)usart1_rx_buffer, "+IPD,0,") != NULL) {
+      // 收到数据段长度
+      esp_command_flag=1;
       // 清空接收缓冲区，准备接收下一条指令
       usart1_rx_index = 0;
       memset(usart1_rx_buffer,0,sizeof(usart1_rx_buffer));
-    }
+      }else if(esp_command_flag==1&&usart1_c==':'){
+        esp_command_flag=2;
+        dataLen=atoi(dataLenStr);
+        usart1_rx_index=-1;
+        memset(dataLenStr,0,sizeof(dataLenStr));
+        realCommand = (char *)malloc((dataLen*sizeof(char))+1);
+        realCommand[dataLen]='\0';
+      }else if(usart1_rx_index==dataLen&&esp_command_flag==2&&usart1_c=='0'){
+        esp_command_flag=3;
+        usart1_rx_index=-1;
+        parseAndProcessCommand(realCommand);
+        // 释放先前分配的内存
+        free(realCommand);
+        // 将指针设置为 NULL
+        realCommand = NULL;
       }
+    }
+      reciveData();
     // 继续启动下一次接收
       HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
 

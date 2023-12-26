@@ -81,11 +81,13 @@ void Error_Handler(void);
 /* USER CODE BEGIN Private defines */
 
 #define BUFFER_SIZE 200
+#define dataMaxLen 4
 extern char usart1_rx_buffer[BUFFER_SIZE];
 extern int usart1_rx_index;
 extern int feedNumFlag;
 extern int esp_flag;
 extern int timeout_flag;
+extern int esp_command_flag;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

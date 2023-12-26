@@ -71,23 +71,4 @@ void Esp01s_Init(char* ip, char* password, char* port) {
   }
 }
 
-char* extractData(const char* input) {
-    // 找到真正数据的起始位置
-    const char* dataStart = strstr(input, ":");
-    if (dataStart == NULL) {
-        // 如果没有找到冒号，返回空指针表示失败
-        return NULL;
-    }
-
-    // 获取真正数据的长度
-    int dataLength = atoi(input + 7);
-    // 分配足够的空间来存储真正数据
-    char* extractedData = (char*)malloc((dataLength + 1) * sizeof(char));
-
-    // 复制真正数据到提取的字符串中
-    strncpy(extractedData, dataStart + 1, dataLength);
-    extractedData[dataLength] = '\0'; // 添加字符串终止符
-
-    return extractedData;
-}
 
