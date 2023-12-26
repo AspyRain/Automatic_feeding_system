@@ -30,14 +30,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private final String default_port ="8080";
     private EspUtil espUtil;
     private TextView dataText;
-
+    private LinearLayout toggleModeButton;
+    private TextView toggleModeText;
+    private boolean messageModeFlag=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        espUtil=new EspUtil();
+        espUtil=new EspUtil(this);
         getTimeButton = findViewById(R.id.get_time_button);
         feed1Button = findViewById(R.id.feed1_button);
         feed2Button = findViewById(R.id.feed2_button);
@@ -48,24 +50,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         port_text.setText(default_port);
         chat_text = findViewById(R.id.chat_text);
         send_button = findViewById(R.id.send_button);
+        toggleModeButton = findViewById(R.id.toggleModeButton);
+        toggleModeText = findViewById(R.id.toggleModeText);
+        espUtil.setDataListener(this);
 
         send_button.setOnClickListener(this);
         getTimeButton.setOnClickListener(this);
         feed1Button.setOnClickListener(this);
         feed2Button.setOnClickListener(this);
+        toggleModeButton.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         String deviceNum = "";
-        if (v!=send_button){
+        if (v==getTimeButton||v==feed1Button||v==feed2Button){
             if (v == getTimeButton) {
                 button_clicked(getTimeButton,R.drawable.bar_clicked);
                 deviceNum = "3";  // 发送消息 "1" 给ESP01S
             } else if (v == feed1Button) {
                 button_clicked(feed1Button,R.drawable.bar_clicked);
                 deviceNum = "1";  // 发送消息 "2" 给ESP01S
-            } else if (v == feed2Button) {
+            } else {
                 button_clicked(feed2Button,R.drawable.bar_clicked);
                 deviceNum = "2";  // 发送消息 "3" 给ESP01S
             }
@@ -76,10 +82,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             espUtil.setPort(port);
             espUtil.sendMessage(deviceNum.toString(),this,true);
         }
-        else{
+        else if (v==send_button){
             String message= chat_text.getText().toString();
             chat_text.setText(null);
+        }else if (v==toggleModeButton){
+            button_clicked(toggleModeButton,R.color.black);
+            toggleModeButton.setBackgroundResource(R.color.button_blue);
+            if (!messageModeFlag){
+                toggleModeText.setText("点击关闭收信");
+                messageModeFlag=true;
+                String ip = ip_text.getText().toString();
+                int port = Integer.parseInt(port_text.getText().toString());
+                espUtil.setIp(ip);
+                espUtil.setPort(port);
+                espUtil.startReceivingData();
 
+            }else {
+                espUtil.stopReceivingData();
+                toggleModeText.setText("点击收信");
+                messageModeFlag=false;
+            }
         }
 
 

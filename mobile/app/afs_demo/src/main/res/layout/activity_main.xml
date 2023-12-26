@@ -34,7 +34,8 @@
                 android:id="@+id/clock_layout"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:gravity="center">
                 <TextClock
                     android:id="@+id/timeText"
                     android:layout_width="match_parent"
@@ -62,19 +63,32 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:orientation="horizontal">
+
                 <TextView
                     android:id="@+id/receiveText"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="40dp"
-                    android:textSize="20sp"
-                    android:gravity="center"
-                    android:background="@color/white"
-                    android:hint="接收数据"/>
-                <LinearLayout
-                    android:layout_width="0d["
-                    android:layout_height="30dp"
                     android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:hint="接收数据"
+                    android:textSize="20sp" />
+
+                <LinearLayout
+                    android:id="@+id/toggleModeButton"
+                    android:layout_gravity="center"
+                    android:layout_width="0dp"
+                    android:layout_height="30dp"
+                    android:layout_weight="0.5"
+                    android:background="@color/button_blue">
+                    <TextView
+                        android:id="@+id/toggleModeText"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:text="点击收信"
+                        android:gravity="center"
+                        android:textSize="15sp"/>
+                </LinearLayout>
             </LinearLayout>
 
             <EditText
