@@ -48,22 +48,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        String message = "";
-        if (v == getTimeButton) {
-            button_clicked(getTimeButton,R.drawable.bar_clicked);
-            message = "3";  // 发送消息 "1" 给ESP01S
-        } else if (v == feed1Button) {
-            button_clicked(feed1Button,R.drawable.bar_clicked);
-            message = "1";  // 发送消息 "2" 给ESP01S
-        } else if (v == feed2Button) {
-            button_clicked(feed2Button,R.drawable.bar_clicked);
-            message = "2";  // 发送消息 "3" 给ESP01S
-        }else if (v==send_button){
-            message = chat_text.getText().toString();
+        String deviceNum = "";
+        if (v!=send_button){
+            if (v == getTimeButton) {
+                button_clicked(getTimeButton,R.drawable.bar_clicked);
+                deviceNum = "3";  // 发送消息 "1" 给ESP01S
+            } else if (v == feed1Button) {
+                button_clicked(feed1Button,R.drawable.bar_clicked);
+                deviceNum = "1";  // 发送消息 "2" 给ESP01S
+            } else if (v == feed2Button) {
+                button_clicked(feed2Button,R.drawable.bar_clicked);
+                deviceNum = "2";  // 发送消息 "3" 给ESP01S
+            }
+            String message="{status:2,detail:{device:"+deviceNum+"}}";
+            sendMessage(deviceNum.toString());
+        }
+        else{
+            String message= chat_text.getText().toString();
             chat_text.setText(null);
+            sendMessage(message);
         }
 
-        sendMessage(message);
+
     }
 
     private void sendMessage(final String message) {

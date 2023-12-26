@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "sys_tick.h": "c",
+        "stm32f10x.h": "c"
+    }
+}

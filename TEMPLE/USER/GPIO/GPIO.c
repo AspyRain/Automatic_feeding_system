@@ -1,16 +1,16 @@
 #include "GPIO.h"
 
-//ÉèÖÃNTCOÊäÈëÒı½ÅÎª¸¡¿ÕÊäÈë
+//è®¾ç½®NTCOè¾“å…¥å¼•è„šä¸ºæµ®ç©ºè¾“å…¥
 void NTCO_GPIO_Config(void)
 {
 	GPIO_InitTypeDef GPIO_InitStructure;
 	
-	//¿ªÊ±ÖÓ
+	//å¼€æ—¶é’Ÿ
   RCC_APB2PeriphClockCmd(NTCO_GPIO_CLK, ENABLE);
 
   GPIO_InitStructure.GPIO_Pin  = NTCO_GPIO_PIN;
-  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;//¸¡¿ÕÊäÈë
+  GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;//æµ®ç©ºè¾“å…¥
 	
-	//³õÊ¼»¯¸ÃGPIO
+	//åˆå§‹åŒ–è¯¥GPIO
 	GPIO_Init(NTCO_GPIO_PORT, &GPIO_InitStructure);
 }

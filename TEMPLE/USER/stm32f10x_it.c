@@ -24,19 +24,19 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
 
-//ÓÐÐ§Êý¾Ý»º³åÇø
+//??Ã‚Â§Ã‚Â¹?????????
 uint8_t Buff[BPC_EFFECT_NUM];
 uint8_t p=0;
 uint8_t temp=4;
 
-//ÁÙÊ±±äÁ¿
+//???????
 uint8_t  flag=0;
 uint32_t x   =0;
 uint32_t y   =0;
 uint32_t z   =0;
 uint32_t i   =0;
 
-//Íâ²¿±äÁ¿
+//??????
 extern uint8_t  flag1;
 extern uint8_t  flag2;
 
@@ -150,7 +150,7 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
-	if(flag)                     //»ñÈ¡NTCOÒý½ÅÓÐÐ§Êý¾Ý
+	if(flag)                     //???NTCO??????Ã‚Â§Ã‚Â¹????
 	{
 		if(p<BPC_EFFECT_NUM)
 		{
@@ -158,31 +158,31 @@ void SysTick_Handler(void)
 		  {
 			  z++;
 			  if(GPIO_ReadInputDataBit(NTCO_GPIO_PORT, NTCO_GPIO_PIN))
-				  i++;                 //iÈ¡Öµ·¶Î§:0~~Sys_Tick_Period
+				  i++;                 //i????Ã‚Â¦Ã‚Â¶:0~~Sys_Tick_Period
 		  }
 		  else
 		  {
 			  if(i>=Zero_Low_Threshold && i<=Zero_High_Threshold)
 			  {
-				  temp=0;              //ËÄ½øÖÆ"0"
+				  temp=0;              //?????"0"
 			  }
 			  else if(i>=One_Low_Threshold && i<=One_High_Threshold)
 			  {
-				  temp=1;              //ËÄ½øÖÆ"1"
+				  temp=1;              //?????"1"
 			  }
 			  else if(i>=Two_Low_Threshold && i<=Two_High_Threshold)
 			  {
-				  temp=2;              //ËÄ½øÖÆ"2"
+				  temp=2;              //?????"2"
 			  }
 			  else if(i>=Three_Low_Threshold && i<=Three_High_Threshold)
 			  {
-				  temp=3;              //ËÄ½øÖÆ"3"
+				  temp=3;              //?????"3"
 			  }
 			  else
 			  {
-				  temp=4;              //ÎÞÒâÒå
+				  temp=4;              //??????
 			  }
-			  Buff[p]=temp;          //Ð´ÈëÓÐÐ§Êý¾Ý»º³åÇø
+			  Buff[p]=temp;          //Ã‚Â§Ãƒâ€¢????Ã‚Â§Ã‚Â¹?????????
 			  p++;
 			  z=0;
 			  i=0;
@@ -195,17 +195,17 @@ void SysTick_Handler(void)
 			flag2=1;
 		}
 	}
-	else                         //µÈ´ýÖ¡ÆðÊ¼±êÖ¾Î»
+	else                         //??????????Ã‚Â¦Ãƒâ€¹
 	{
-		if(x<Sys_Tick_Period)      //¶ÔNTCOÒý½Å½øÐÐÖ¡ÆðÊ¼±êÖ¾Î»²ÉÑù
+		if(x<Sys_Tick_Period)      //??NTCO??????????????Ã‚Â¦Ãƒâ€¹????
 	  {
 		  x++;
 		  if(!GPIO_ReadInputDataBit(NTCO_GPIO_PORT, NTCO_GPIO_PIN))
-			  y++;                   //yÈ¡Öµ·¶Î§:0~~Sys_Tick_Period
+			  y++;                   //y????Ã‚Â¦Ã‚Â¶:0~~Sys_Tick_Period
 	  }
-	  else                       //²ÉÑùÖÜÆÚ½áÊø£¬ÅÐ¶ÏÊÇ·ñÎªÖ¡ÆðÊ¼±êÖ¾Î»
+	  else                       //??????????????Ã‚Â§ÃƒËœ????????????Ã‚Â¦Ãƒâ€¹
 	  {
-		  if(y>=Sys_Tick_Threshold)//¼ì²âµ½Ö¡ÆðÊ¼±êÖ¾Î»
+		  if(y>=Sys_Tick_Threshold)//??????????Ã‚Â¦Ãƒâ€¹
 			{
 			  flag=1;
 				flag1=1;

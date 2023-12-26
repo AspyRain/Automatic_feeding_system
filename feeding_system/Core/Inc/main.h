@@ -63,6 +63,8 @@ void Error_Handler(void);
 #define feeding_2_GPIO_Port GPIOA
 #define feeding_3_Pin GPIO_PIN_6
 #define feeding_3_GPIO_Port GPIOA
+#define esp_enable_flag_Pin GPIO_PIN_7
+#define esp_enable_flag_GPIO_Port GPIOA
 #define clock_pon_Pin GPIO_PIN_15
 #define clock_pon_GPIO_Port GPIOB
 #define clock_tccn_Pin GPIO_PIN_8
@@ -78,6 +80,12 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
+#define BUFFER_SIZE 200
+extern char usart1_rx_buffer[BUFFER_SIZE];
+extern int usart1_rx_index;
+extern int feedNumFlag;
+extern int esp_flag;
+extern int timeout_flag;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

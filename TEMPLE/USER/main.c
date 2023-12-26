@@ -5,86 +5,86 @@
 #include "Sys_Tick.h"
 #include "BPC_DECODE.h"
 
-//Íâ²¿±äÁ¿
+//å¤–éƒ¨å˜é‡
 extern uint8_t Buff[BPC_EFFECT_NUM];
 
-//±êÖ¾Î»
-uint8_t  flag1=0;//Ö¡ÆğÊ¼±êÖ¾
-uint8_t  flag2=0;//ÓĞĞ§Êı¾İÒÑÂú±êÖ¾
+//æ ‡å¿—ä½
+uint8_t  flag1=0;//å¸§èµ·å§‹æ ‡å¿—
+uint8_t  flag2=0;//æœ‰æ•ˆæ•°æ®å·²æ»¡æ ‡å¿—
 
-//ÁÙÊ±±äÁ¿
+//ä¸´æ—¶å˜é‡
 uint8_t j;
 
-//½âÂëÊ±¼ä»º³åÇø
+//è§£ç æ—¶é—´ç¼“å†²åŒº
 uint8_t DATA[BPC_EFFECT_DATA];
 
 int main(void)
 {
-	USART_Config();    //ÅäÖÃµ÷ÊÔÓÃµÄ´®¿Ú
+	USART_Config();    //é…ç½®è°ƒè¯•ç”¨çš„ä¸²å£
 	printf("USART1 ONLINE\n");
 	
-	NTCO_GPIO_Config();//ÅäÖÃNTCOÊäÈëÒı½Å
+	NTCO_GPIO_Config();//é…ç½®NTCOè¾“å…¥å¼•è„š
 	printf("NTCO @ GPIO_A4\n");
 	
-	if(Sys_Tick_Config(Sys_Tick_Reload))//ÅäÖÃSys_Tick,10msÒ»´ÎÖĞ¶Ï
+	if(Sys_Tick_Config(Sys_Tick_Reload))//é…ç½®Sys_Tick,10msä¸€æ¬¡ä¸­æ–­
 	{
 		printf("Sys_Tick Init Failed, Check Sys_Tick_Reload Parameter And Reset\n");
 		while(1);
 	}
 	printf("Sys_Tick Init Successfully\n");
 	
-	while(1)//µÈ´ıSys_TickÖĞ¶Ï
+	while(1)//ç­‰å¾…Sys_Tickä¸­æ–­
 	{
-		if(flag1)     //¼ì²âµ½ÁËÖ¡ÆğÊ¼±êÖ¾Î»
+		if(flag1)     //æ£€æµ‹åˆ°äº†å¸§èµ·å§‹æ ‡å¿—ä½
 		{
 			flag1=0;
 			printf("Frame Head Detected\n");
 		}
-		else if(flag2)//ÓĞĞ§Êı¾İ»º³åÇøÒÑÂú
+		else if(flag2)//æœ‰æ•ˆæ•°æ®ç¼“å†²åŒºå·²æ»¡
 		{
 			flag2=0;
 			for(j=0; j<BPC_EFFECT_NUM; j++)
 			  printf("%d ", Buff[j]);
 			printf("\n");
 			
-			j=BPC_DECODE(Buff, DATA);//½âÂëÔ­Ê¼Êı¾İ
-			if(j==1)     //¸ÃÖ¡ÓĞÎŞĞ§Êı¾İ
+			j=BPC_DECODE(Buff, DATA);//è§£ç åŸå§‹æ•°æ®
+			if(j==1)     //è¯¥å¸§æœ‰æ— æ•ˆæ•°æ®
 				printf("Contain Invaild Data\n");
-			else if(j==2)//ÓĞĞ§Êı¾İµÚÒ»½×¶ÎĞ£Ñé´íÎó
+			else if(j==2)//æœ‰æ•ˆæ•°æ®ç¬¬ä¸€é˜¶æ®µæ ¡éªŒé”™è¯¯
 				printf("First Stage Verify Failed\n");
-			else if(j==3)//ÓĞĞ§Êı¾İµÚ¶ş½×¶ÎĞ£Ñé´íÎó
+			else if(j==3)//æœ‰æ•ˆæ•°æ®ç¬¬äºŒé˜¶æ®µæ ¡éªŒé”™è¯¯
 				printf("Second Stage Verify Failed\n");
-			else if(j==4)//½âÂë³É¹¦
+			else if(j==4)//è§£ç æˆåŠŸ
 			{
-				printf("%d Äê ",DATA[7]+2000);//Äê
-				printf("%d ÔÂ", DATA[6]);     //ÔÂ
-				printf("%d ÈÕ", DATA[5]);     //ÈÕ
-				printf("%d Ê±", DATA[4] ? (DATA[1] + 12) : DATA[1]); //Ê±,24Ğ¡Ê±ÖÆ
-				printf("%d ·Ö", DATA[2]);     //·Ö
-				printf("%d Ãë", DATA[0]);     //Ãë
-				//printf("%d\n ", DATA[3]);         //ĞÇÆÚ
+				printf("%d å¹´ ",DATA[7]+2000);//å¹´
+				printf("%d æœˆ", DATA[6]);     //æœˆ
+				printf("%d æ—¥", DATA[5]);     //æ—¥
+				printf("%d æ—¶", DATA[4] ? (DATA[1] + 12) : DATA[1]); //æ—¶,24å°æ—¶åˆ¶
+				printf("%d åˆ†", DATA[2]);     //åˆ†
+				printf("%d ç§’", DATA[0]);     //ç§’
+				//printf("%d\n ", DATA[3]);         //æ˜ŸæœŸ
 				switch(DATA[3])
 				{
 					case 1:
-						printf(" ĞÇÆÚÒ»\n ");
+						printf(" æ˜ŸæœŸä¸€\n ");
 					break;
 					case 2:
-						printf(" ĞÇÆÚ¶ş\n ");
+						printf(" æ˜ŸæœŸäºŒ\n ");
 					break;
 					case 3:
-						printf(" ĞÇÆÚÈı\n ");
+						printf(" æ˜ŸæœŸä¸‰\n ");
 					break;
 					case 4:
-						printf(" ĞÇÆÚËÄ\n ");
+						printf(" æ˜ŸæœŸå››\n ");
 					break;
 					case 5:
-						printf(" ĞÇÆÚÎå\n ");
+						printf(" æ˜ŸæœŸäº”\n ");
 					break;
 					case 6:
-						printf(" ĞÇÆÚÁù\n ");
+						printf(" æ˜ŸæœŸå…­\n ");
 					break;
 					case 7:
-						printf(" ĞÇÆÚÈÕ\n ");
+						printf(" æ˜ŸæœŸæ—¥\n ");
 					break;
 				}
 			}

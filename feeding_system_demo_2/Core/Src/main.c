@@ -78,12 +78,14 @@ int esp_flag=0;//判断esp是否就绪
 int timeout_flag=0;
 
 void Esp01s_Init(char* ip, char* password, char* port);
-void sendData(UART_HandleTypeDef *huart, const char *str);
+void wait_for_esp(char* key);
 void parseAndProcessCommand(char *command);
 char* extractData(const char* input) ;
+
+void sendData(UART_HandleTypeDef *huart, const char *str);
 void flash_test();
 void parse_json(void *promt) ;
-void wait_for_esp(char* key);
+
 /* USER CODE END 0 */
 
 /**
