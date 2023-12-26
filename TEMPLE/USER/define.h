@@ -56,7 +56,7 @@
 
 //电波钟NTCO输入端口
 //STM32  CME6005
-//A4<----NTCO
+//A8<----NTCO
 //GND----GND
 #define  NTCO_GPIO_CLK                  RCC_APB2Periph_GPIOA
 #define  NTCO_GPIO_PORT                 GPIOA
