@@ -189,8 +189,7 @@ void processJson(const char *jsonString) {
     // 根据不同的status执行不同的操作
     switch (status) {
         case 0:
-            // 类型0的处理
-            // 可以在这里执行查看计划的操作
+            
             break;
         case 1: {
             // 类型1的处理
@@ -202,7 +201,6 @@ void processJson(const char *jsonString) {
                 rt_kprintf("Error parsing JSON: %s\n", jsonString);
                 return;
             }
-
             // 在这里执行新建计划的操作，你可以将解析得到的数据传递给相应的函数
             insertPlan(&timerData->plans, device, *newTime(h, m, s) , duration, *newDate(beginYear, beginMonth, beginDay) ,*newDate(endYear, endMonth, endDay) );
             break;

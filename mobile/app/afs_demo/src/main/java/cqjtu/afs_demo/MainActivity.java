@@ -2,6 +2,7 @@ package cqjtu.afs_demo;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,12 +10,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+import cqjtu.afs_demo.util.EspUtil;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener ,EspUtil.EspDataListener{
     private LinearLayout getTimeButton;
     private LinearLayout feed1Button;
     private LinearLayout feed2Button;
@@ -24,17 +28,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button send_button;
     private final String default_ip = "192.168.118.136";
     private final String default_port ="8080";
+    private EspUtil espUtil;
+    private TextView dataText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        espUtil=new EspUtil();
         getTimeButton = findViewById(R.id.get_time_button);
         feed1Button = findViewById(R.id.feed1_button);
         feed2Button = findViewById(R.id.feed2_button);
         ip_text = findViewById(R.id.ip);
         port_text = findViewById(R.id.port);
+        dataText = findViewById(R.id.receiveText);
         ip_text.setText(default_ip);
         port_text.setText(default_port);
         chat_text = findViewById(R.id.chat_text);
@@ -61,39 +70,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 deviceNum = "2";  // 发送消息 "3" 给ESP01S
             }
             String message="{status:2,detail:{device:"+deviceNum+"}}";
-            sendMessage(deviceNum.toString());
+            String ip = ip_text.getText().toString();
+            int port = Integer.parseInt(port_text.getText().toString());
+            espUtil.setIp(ip);
+            espUtil.setPort(port);
+            espUtil.sendMessage(deviceNum.toString(),this,true);
         }
         else{
             String message= chat_text.getText().toString();
             chat_text.setText(null);
-            sendMessage(message);
+
         }
 
 
     }
 
-    private void sendMessage(final String message) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String ip = ip_text.getText().toString();
-                    int port = Integer.parseInt(port_text.getText().toString());
-
-                    Socket socket = new Socket(ip, port);
-                    OutputStream outputStream = socket.getOutputStream();
-
-                    // 发送消息
-                    outputStream.write(message.getBytes());
-
-                    // 关闭连接
-                    socket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-    }
     private void button_clicked(View button, int clicked_resID) {
         Handler handler = new Handler();
         Drawable origin_res = button.getBackground();
@@ -125,5 +116,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
             }
         }).start();
+    }
+
+    @Override
+    public void onDataReceived(String data) {
+        dataText.setText(data);
     }
 }
