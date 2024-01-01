@@ -1,28 +1,58 @@
 package cqjtu.afs_mobile;
 
+import static cqjtu.afs_mobile.util.ToastUtil.showToast;
+
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+
+import cqjtu.afs_mobile.util.EspUtil;
 
 public class Load extends AppCompatActivity {
 
     private LinearLayout enterButton;
+    private EditText ip_text;
+    private EditText port_text;
+    private EspUtil espUtil;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_load);
         enterButton=findViewById(R.id.enterButton);
+        ip_text = findViewById(R.id.ip_text);
+        port_text = findViewById(R.id.port_text);
+        espUtil = new EspUtil(this);
         enterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 button_clicked(enterButton);
-                Intent mainIntent = new Intent(Load.this, MainActivity.class); //前者为跳转前页面，后者为跳转后页面
-                Load.this.startActivity(mainIntent);
+                String ip = ip_text.getText().toString();
+                int port = Integer.parseInt(port_text.getText().toString());
+                espUtil.setIp(ip);
+                espUtil.setPort(port);
+                espUtil.testConnection(new EspUtil.ConnectionCallback() {
+                    @Override
+                    public void onSuccess() {
+                        // 连接成功的操作
+                        showToast("连接成功", Load.this);
+                        Intent loadIntent = new Intent(Load.this, MainActivity.class);
+                        loadIntent.putExtra("IP", ip);
+                        loadIntent.putExtra("Port", port);
+                        Load.this.startActivity(loadIntent);
+                    }
 
+                    @Override
+                    public void onFailure(String errorMessage) {
+                        // 连接失败的操作
+                        showToast(errorMessage, Load.this);
+                    }
+                });
             }
         });
     }

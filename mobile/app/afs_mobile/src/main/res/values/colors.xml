@@ -9,4 +9,5 @@
     <color name="main_bg">#F0F0F0</color>
     <color name="theme_green_3">#93A37F</color>
     <color name="theme_green_4">#0B0B0A</color>
+    <color name="red">#F44336</color>
 </resources>

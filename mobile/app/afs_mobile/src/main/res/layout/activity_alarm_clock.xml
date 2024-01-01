@@ -45,9 +45,29 @@
             </LinearLayout>
 
         </LinearLayout>
+
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/main_bg"
+            android:padding="16dp"
+            tools:listitem="@layout/item_plan" />
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:gravity="center">
+            <LinearLayout
+                android:id="@+id/add_feedingDevice"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:background="@mipmap/add"
+                android:orientation="horizontal"/>
+
 
         </LinearLayout>
     </LinearLayout>

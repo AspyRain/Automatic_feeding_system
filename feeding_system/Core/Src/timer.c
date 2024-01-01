@@ -1,8 +1,11 @@
 #include "timer.h"
 #include <stdlib.h>
 #include "rtthread.h"
+
+
 Timer *timerData = NULL; 
 int planCount=0;
+int deviceCount = 0; 
 int timerInit(Date *now_date,Time *now_time,Plan *now_plan){
     
         // 在运行时动态分配内存给 Timer 对象

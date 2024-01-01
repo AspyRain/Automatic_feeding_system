@@ -1,7 +1,9 @@
 package cqjtu.afs_mobile.entity;
 
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class Plan {
     private long id;
@@ -11,6 +13,18 @@ public class Plan {
     private Date beginDate;
     private Date endDate;
 
+
+    public Plan(long id, long device, Date time, int duration, Date beginDate, Date endDate) {
+        this.id = id;
+        this.device = device;
+        this.time = time;
+        this.duration = duration;
+        this.beginDate = beginDate;
+        this.endDate = endDate;
+    }
+    public Plan() {
+
+    }
     public long getId() {
         return id;
     }
@@ -46,7 +60,18 @@ public class Plan {
     public Date getBeginDate() {
         return beginDate;
     }
-
+    public String getDateString(int flag){
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd", Locale.getDefault());
+        if (flag==0){
+            return dateFormat.format(getBeginDate());
+        }else {
+            return dateFormat.format(getEndDate());
+        }
+    }
+    public String getTimeString(){
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        return timeFormat.format(getTime());
+    }
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;
     }

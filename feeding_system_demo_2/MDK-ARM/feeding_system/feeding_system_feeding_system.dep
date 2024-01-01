@@ -32,7 +32,7 @@ I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h)(0x65327463)
 I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x65327463)
 I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x65327463)
 I (..\Core\Inc\i2c.h)(0x6576A5CC)
-I (..\Core\Inc\usart.h)(0x658924B9)
+I (..\Core\Inc\usart.h)(0x658924D2)
 I (..\Core\Inc\gpio.h)(0x6576A5CC)
 I (..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h)(0x65635E03)
 I (..\RT-Thread\rtconfig.h)(0x6576CF81)
@@ -111,7 +111,7 @@ I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h)(0x65327463)
 I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h)(0x65327463)
 I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h)(0x65327463)
 F (../Core/Src/usart.c)(0x658924A2)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m3 -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -O3 -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../RT-Thread -I ../Drivers/STM32F1xx_HAL_Driver/Inc -I ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I ../Drivers/CMSIS/Include -I ../Middlewares/Third_Party/RealThread_RTOS/include/ -I ../Middlewares/Third_Party/RealThread_RTOS/bsp/_template/cubemx_config -I ../Middlewares/Third_Party/RealThread_RTOS/finsh/ -I ../Middlewares/Third_Party/RealThread_RTOS/components/finsh-I./RTE/_feeding_system-ID:/software/Keil/Packs/ARM/CMSIS/5.9.0/CMSIS/Core/Include-ID:/software/Keil/Packs/Keil/STM32F1xx_DFP/2.3.0/Device/Include-D__UVISION_VERSION="538" -D_RTE_ -DSTM32F10X_MD -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F103xB-o feeding_system/usart.o -MD)
-I (..\Core\Inc\usart.h)(0x658924B9)
+I (..\Core\Inc\usart.h)(0x658924D2)
 I (..\Core\Inc\main.h)(0x6576B84B)
 I (..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h)(0x65327463)
 I (..\Core\Inc\stm32f1xx_hal_conf.h)(0x6576A5CC)

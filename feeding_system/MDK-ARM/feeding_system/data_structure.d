@@ -10,4 +10,6 @@ feeding_system/data_structure.o: ..\Core\Src\data_structure.c \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
-  ..\Core\Src\timer.h
+  ..\Core\Src\timer.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h

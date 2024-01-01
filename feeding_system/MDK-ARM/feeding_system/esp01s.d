@@ -36,7 +36,7 @@ feeding_system/esp01s.o: ..\Core\Src\esp01s.c ..\Core\Src\esp01s.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
   ..\Core\Src\feeding.h

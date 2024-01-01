@@ -57,11 +57,12 @@
                 android:gravity="center"
                 android:orientation="vertical"
                 >
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:layout_width="150dp"
                     android:layout_height="150dp"
-                    android:background="@mipmap/clock"
-                    />
+                    android:background="@mipmap/clock" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

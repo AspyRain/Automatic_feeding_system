@@ -14,11 +14,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import cqjtu.afs_mobile.entity.ConnectionInfo;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private LinearLayout alarmClockButton;
     private LinearLayout controllerButton;
     private LinearLayout recorderButton;
+    private ConnectionInfo connectionInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,6 +30,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         alarmClockButton = findViewById(R.id.alarmClockButton);
         controllerButton = findViewById(R.id.controllerButton);
         recorderButton = findViewById(R.id.recorderButton);
+        Intent intent = getIntent();
+        if (intent != null) {
+            connectionInfo=new ConnectionInfo(intent.getStringExtra("IP"),intent.getIntExtra("Port", 0));
+        }
         alarmClockButton.setOnClickListener(this);
         controllerButton.setOnClickListener(this);
         recorderButton.setOnClickListener(this);
@@ -35,8 +43,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         button_clicked(v);
         if (v==controllerButton){
-            Intent controllerIntent = new Intent(this, Controller.class); //前者为跳转前页面，后者为跳转后页面
-            this.startActivity(controllerIntent);
+            Intent mainIntent = new Intent(MainActivity.this, Controller.class);
+            mainIntent.putExtra("IP", connectionInfo.getIp());
+            mainIntent.putExtra("Port", connectionInfo.getPort());
+            MainActivity.this.startActivity(mainIntent);
         }
     }
     private void button_clicked(View button) {

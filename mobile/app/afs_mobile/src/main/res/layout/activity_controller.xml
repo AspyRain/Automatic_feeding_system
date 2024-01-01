@@ -11,49 +11,40 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/main_bg"
-        android:orientation="vertical"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/topBar"
             android:layout_width="match_parent"
             android:layout_height="55dp"
             android:background="@color/bar_green"
-            android:gravity="center"
-            android:orientation="horizontal">
+            android:gravity="center">
 
-            <LinearLayout
-                android:layout_width="230dp"
-                android:layout_height="match_parent">
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginHorizontal="5dp"
+                android:background="@mipmap/icon"
+                android:id="@+id/topBarIcon" />
 
-                <ImageView
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:layout_marginHorizontal="5dp"
-                    android:background="@mipmap/icon" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toEndOf="@id/topBarIcon"
+                android:text="投喂器管理"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                tools:ignore="MissingConstraints,TextContrastCheck" />
+        </RelativeLayout>
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="55dp"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="投喂器管理"
-                    android:textColor="@color/white"
-                    android:textSize="30sp"
-                    tools:ignore="MissingConstraints,TextContrastCheck" />
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+        <ListView
+            android:id="@+id/listView"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:background="@color/main_bg"
             android:padding="16dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             tools:listitem="@layout/item_feeding_device" />
 
         <LinearLayout
@@ -62,13 +53,15 @@
             android:layout_gravity="center"
             android:orientation="horizontal"
             android:gravity="center">
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/add_feedingDevice"
-                android:layout_width="50dp"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/add"/>
+                <LinearLayout
+                    android:id="@+id/add_feedingDevice"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:background="@mipmap/add"
+                    android:orientation="horizontal"/>
+
+
         </LinearLayout>
 
     </LinearLayout>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

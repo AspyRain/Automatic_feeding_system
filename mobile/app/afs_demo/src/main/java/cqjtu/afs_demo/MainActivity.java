@@ -78,13 +78,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             String message="{status:2,detail:{device:"+deviceNum+"}}";
             String ip = ip_text.getText().toString();
             int port = Integer.parseInt(port_text.getText().toString());
-          //  espUtil.setIp(ip);
+            espUtil.setIp(ip);
             espUtil.setPort(port);
-            espUtil.sendMessage(deviceNum.toString(),this,true);
+            espUtil.sendMessage(message,this,false);
         }
         else if (v==send_button){
             String message= chat_text.getText().toString();
             chat_text.setText(null);
+            espUtil.sendMessage(message,this,false);
         }else if (v==toggleModeButton){
             button_clicked(toggleModeButton,R.color.black);
             toggleModeButton.setBackgroundResource(R.color.button_blue);
@@ -93,10 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 messageModeFlag=true;
                 String ip = ip_text.getText().toString();
                 int port = Integer.parseInt(port_text.getText().toString());
-                //espUtil.setIp(ip);
+                espUtil.setIp(ip);
                 espUtil.setPort(port);
-                espUtil.startReceivingData();
-
+                espUtil.sendMessage("{status:0,detail:{type:0}}",this,true);
             }else {
                 espUtil.stopReceivingData();
                 toggleModeText.setText("点击收信");

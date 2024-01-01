@@ -52,4 +52,7 @@ void setTime(Time *time,int h,int m,int s);
 Date* newDate(int year,int month,int day);
 Time* newTime(int h,int m,int s);
 void insertPlan(Plan** plans,int device, Time time, int duration, Date beginDate, Date endDate);
+void planToString(Plan** plans, int planCount, char** string);
+void insertDevice(Device** devices,const char* name) ;
+void deviceToString(Device** devices, int deviceCount, char** string);
 #endif /* DATA_STRUCTURE_H */

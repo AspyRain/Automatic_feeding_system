@@ -1,6 +1,7 @@
 package cqjtu.afs_mobile.util;
 
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,11 +13,12 @@ import cqjtu.afs_mobile.entity.FeedingDevice;
 public class ViewHolder extends RecyclerView.ViewHolder {
     TextView feedingIdTextView;
     TextView feedingNameTextView;
-
+    Switch deviceSwitch;
     public ViewHolder(@NonNull View itemView) {
         super(itemView);
         feedingIdTextView = itemView.findViewById(R.id.feeding_id);
         feedingNameTextView = itemView.findViewById(R.id.feeding_name);
+        deviceSwitch = itemView.findViewById(R.id.deviceSwitch);
     }
 
     public void bind(FeedingDevice data) {
