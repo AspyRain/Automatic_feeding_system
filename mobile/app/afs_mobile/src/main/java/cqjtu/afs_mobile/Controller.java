@@ -101,6 +101,7 @@ public class Controller extends AppCompatActivity implements EspUtil.EspDataList
     @Override
     public void onDataReceived(String data) {
         this.receivedData = data;
+        espUtil.stopReceivingData();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -132,5 +133,14 @@ public class Controller extends AppCompatActivity implements EspUtil.EspDataList
     @Override
     public void onNegativeResult() {
         showToast("取消操作!",this);
+    }
+    @Override
+    public void onBackPressed() {
+        // 在退出界面时执行的功能
+        // 可以调用自定义的方法或写具体的逻辑
+        espUtil.stopReceivingData();
+
+        // 调用父类的方法以确保正常的退出处理
+        super.onBackPressed();
     }
 }

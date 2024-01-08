@@ -195,5 +195,6 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 /* USER CODE BEGIN 1 */
 void sendData(UART_HandleTypeDef *huart, const char *str) {
   HAL_UART_Transmit(huart, (uint8_t *)str, strlen(str), HAL_MAX_DELAY);
+
 }
 /* USER CODE END 1 */

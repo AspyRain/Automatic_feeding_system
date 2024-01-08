@@ -77,7 +77,7 @@ public class JsonUtil {
 
         return feedingDevices;
     }
-    private static Date parseTime(int hour, int minute, int second) throws ParseException {
+    public static Date parseTime(int hour, int minute, int second) throws ParseException {
         String timeString = hour + ":" + minute + ":" + second;
         SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
         return format.parse(timeString);
@@ -87,5 +87,10 @@ public class JsonUtil {
         String dateString = year + "-" + month + "-" + day;
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         return format.parse(dateString);
+    }
+    public static String planToJsonString(Plan plan){
+        return "{"+Long.toString(plan.getDevice())+",:"+plan.getTime().getHours()+","+plan.getTime().getMinutes()+"," +
+                plan.getTime().getSeconds()+"."+Integer.toString(plan.getDuration())+",:"+plan.getBeginDate().getYear()+","+plan.getBeginDate().getMonth()
+                +","+plan.getBeginDate().getDay()+".:"+plan.getEndDate().getYear()+","+plan.getEndDate().getMonth()+","+plan.getEndDate().getDay()+"}";
     }
 }

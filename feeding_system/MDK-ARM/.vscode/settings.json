@@ -1,5 +1,8 @@
 {
     "files.associations": {
-        "main.h": "c"
+        "main.h": "c",
+        "__config": "c",
+        "data_structure.h": "c",
+        "timer.h": "c"
     }
 }

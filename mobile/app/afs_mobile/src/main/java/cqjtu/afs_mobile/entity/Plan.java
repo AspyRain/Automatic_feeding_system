@@ -1,11 +1,13 @@
 package cqjtu.afs_mobile.entity;
 
 
+import java.io.Serializable;
+import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-public class Plan {
+public class Plan implements Serializable {
     private long id;
     private long device;
     private Date time;
@@ -45,7 +47,7 @@ public class Plan {
         return time;
     }
 
-    public void setDate(Date time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 

@@ -48,6 +48,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mainIntent.putExtra("Port", connectionInfo.getPort());
             MainActivity.this.startActivity(mainIntent);
         }
+        else if (v==alarmClockButton){
+            Intent alarmIntent = new Intent(MainActivity.this,AlarmClock.class);
+            alarmIntent.putExtra("IP", connectionInfo.getIp());
+            alarmIntent.putExtra("Port", connectionInfo.getPort());
+            MainActivity.this.startActivity(alarmIntent);
+        }
     }
     private void button_clicked(View button) {
         Handler handler = new Handler();

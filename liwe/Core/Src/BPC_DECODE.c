@@ -158,7 +158,7 @@ uint8_t BPC_DECODE(uint8_t *Buff, uint8_t *DATA)
 	DATA++;
 	
 	//年份
-	Buff++;                        //指针指向"年份"数据起始处
+	Buff++;                        //指针指向"年份"数据起始R处
 	*DATA+=(*Buff)*16;
 	Buff++;
 	*DATA+=(*Buff)*4;

@@ -32,6 +32,7 @@
 #include "data_structure.h"
 #include "timer.h"
 #include <stdio.h>
+#include "BPC_DECODE.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,6 +61,11 @@ void SystemClock_Config(void);
 void parseAndProcessCommand(char *command);
 void reciveData();
 void processJson(void *parameter);
+void timerThreadEntry(void *pmt);
+void timeInit(void *pmt);
+
+void handleStateZero(void *pmt);
+
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -71,10 +77,17 @@ int dataLen;
 char dataLenStr[dataMaxLen];
 char *realCommand;
 char *jsonMessage;
-Plan *plans = NULL;
-Device *devices = NULL;
+int AT_OK_Flag = 0;
+int AT_Ready_Flag = 0;
+int AT_Connect_Net_Flag = 0;
+char *status = "初始";
+int checkReciveFlag = 0;
+DeviceList *deviceList = NULL;
 /* USER CODE END 0 */
-
+void initESP(void *pmt)
+{
+  Esp01s_Init("AspyRain", "Lxr20030106", "8080");
+}
 /**
  * @brief  The application entry point.
  * @retval int
@@ -106,24 +119,50 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
+
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
-  Esp01s_Init("AspyRain", "Lxr20030106", "8080");
+  // 获取初始时间
+    checkReciveFlag = 1;
+    rt_thread_t checkRecive = rt_thread_create("checkRecive", handleStateZero, RT_NULL, 1024, 4, 10);
+    if (checkRecive != RT_NULL)
+    {
+      rt_thread_startup(checkRecive);
+      rt_kprintf("初始化ESP01S中\n");
+      Esp01s_Init("AspyRain", "Lxr20030106", "8080");
+    }
+
+
   /* USER CODE END 2 */
   // 例子插入一个计划
-  insertPlan(&plans, 1, *newTime(10, 5, 10), 5, *newDate(2023, 12, 27), *newDate(2023, 12, 28));
-  insertDevice(&devices, "feed_1");
-  insertDevice(&devices, "feed_2");
-  insertDevice(&devices, "feed_3");
+
+  newPlanList(&planList);
+  newDeviceList(&deviceList);
+  insertPlan(planList, 1, *newTime(10, 5, 10), 5, *newDate(2023, 12, 27), *newDate(2023, 12, 28));
+  insertPlan(planList, 2, *newTime(14, 19, 10), 20, *newDate(2024, 1,7), *newDate(2024, 12, 29));
+
+  insertDevice(deviceList, "feed_1");
+  insertDevice(deviceList, "feed_2");
+  insertDevice(deviceList, "feed_3");
+  timerInit(newDate(2024, 1, 8), newTime(14, 18, 50), planList);
+  // rt_thread_t timerThread = rt_thread_create("timerThread", timerThreadEntry, RT_NULL, 2048, 4, 10);
+  // if (timerThread != RT_NULL)
+  // {
+  //   rt_thread_startup(timerThread);
+  // }
+  rt_thread_t timeInitThread = rt_thread_create("timeInit",timeInit,RT_NULL,2048,4,10);
+  if (timeInitThread != RT_NULL)
+  {
+    rt_thread_startup(timeInitThread);
+  }
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-
-    rt_thread_mdelay(20);
+    rt_thread_mdelay(1000);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -172,11 +211,18 @@ void parseAndProcessCommand(char *command)
   {
     // 在这里处理提取出的值
     // 将提取出的值存储到全局变量中
-    rt_kprintf("%s\n", command);
+    rt_kprintf("创建jsonMessage\n");
     jsonMessage = (char *)malloc(strlen(command) + 1);
-    strcpy(jsonMessage, command);
-
-    rt_kprintf("jsonMessage=%s\n", jsonMessage);
+    rt_kprintf("创建OK\n");
+    rt_kprintf("赋值jsonMessage\n");
+    if (jsonMessage != NULL && command != NULL) {
+    strncpy(jsonMessage, command, strlen(command) + 1);
+}
+    rt_kprintf("复制成功\n");
+      rt_kprintf("jsonString:%s\n",jsonMessage);
+    if (jsonMessage!=NULL){
+      rt_kprintf("进入处理线程\n");
+      
     // 创建线程并传递 command 参数
     rt_thread_t processJsonThread = rt_thread_create("processJson", processJson, RT_NULL, 2048, 5, 10);
     if (processJsonThread != RT_NULL)
@@ -184,9 +230,27 @@ void parseAndProcessCommand(char *command)
       // 启动线程
       rt_thread_startup(processJsonThread);
     }
+    }
+
   }
 }
-
+void timeInit(void *pmt)
+{
+  startGetTime();
+}
+void timerThreadEntry(void *pmt)
+{
+  int result;
+  while (1)
+  {
+    result = timerRun();
+    if (result == 1)
+    {
+      startGetTime();
+    }
+    rt_thread_mdelay(1000);
+  }
+}
 void processJson(void *parameter)
 {
   int status;
@@ -200,7 +264,7 @@ void processJson(void *parameter)
 
   // 使用sscanf进行简单的解析
   int parsedItems = sscanf(jsonMessage, "{status:%d,", &status);
-
+  rt_kprintf("status:%d\n",status);
   // 检查解析是否成功
   if (parsedItems != 1)
   {
@@ -216,10 +280,9 @@ void processJson(void *parameter)
   {
   case 0:
   {
-    rt_kprintf("进入status: 0\n");
     rt_thread_mdelay(20);
     char *dataString;
-    parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%d", &type);
+    parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%d}", &type);
     if (parsedItems != 1)
     {
       rt_kprintf("Error parsing JSON: %s\n", jsonMessage);
@@ -227,33 +290,29 @@ void processJson(void *parameter)
       free(jsonMessage);
       return;
     }
-    rt_kprintf("type: %s\n", type);
     switch (type)
     {
     case 0:
     {
-      rt_kprintf("进入type: 0\n");
-      deviceToString(&devices, deviceCount, &dataString);
+      deviceToString(deviceList, &dataString);
+      espSend(dataString, 1);
+      free(dataString);
       break;
     }
     case 1:
     {
-      rt_kprintf("进入type: 1\n");
-      planToString(&plans, planCount, &dataString);
+      sendPlan(planList);
       break;
     }
     default:
       break;
     }
-    rt_kprintf("main函数执行espSend\n");
-    espSend(dataString);
-    rt_kprintf("释放先前分配的内存\n");
-    free(dataString);
+
     break;
   }
   case 1:
   {
-    rt_kprintf("进入status: 1\n");
+    rt_kprintf("进入status:1\n");
     // 类型1的处理
     // 使用sscanf解析详细信息
     parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%d,", &type);
@@ -268,7 +327,7 @@ void processJson(void *parameter)
     {
     case 0:
     {
-      rt_kprintf("进入type: 0\n");
+
       char *deviceName = malloc(30); // 假设 MAX_DEVICE_NAME_LENGTH 是足够大的一个常数
       if (deviceName == NULL)
       {
@@ -287,15 +346,15 @@ void processJson(void *parameter)
         return;
       }
 
-      insertDevice(&devices, deviceName);
-      rt_kprintf("device写入完成 ,id:%d\n",devices[deviceCount-1].id);
+      insertDevice(deviceList, deviceName);
       // 释放内存
       free(deviceName);
       break;
     }
     case 1:
     {
-      parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%*d,{device:%d,Time:{h:%d,m:%d,s:%d},duration:%d,beginDate:{year:%d,month:%d,day:%d},endDate:{year:%d,month:%d,day:%d}}}}",
+      rt_kprintf("type:1\n");
+      parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%*d,{%d,:%d,%d,%d.%d,:%d,%d,%d.:%d,%d,%d}}}}",
                            &device, &h, &m, &s, &duration, &beginYear, &beginMonth, &beginDay, &endYear, &endMonth, &endDay);
       // 检查解析是否成功
       if (parsedItems != 11)
@@ -305,8 +364,10 @@ void processJson(void *parameter)
         free(jsonMessage);
         return;
       }
+      rt_kprintf("获取完plan数据\n");
       // 在这里执行新建计划的操作，你可以将解析得到的数据传递给相应的函数
-      insertPlan(&timerData->plans, device, *newTime(h, m, s), duration, *newDate(beginYear, beginMonth, beginDay), *newDate(endYear, endMonth, endDay));
+      insertPlan(planList,device, *newTime(h, m, s), duration, *newDate(beginYear, beginMonth, beginDay), *newDate(endYear, endMonth, endDay));
+      espSend("OK\n",1);
       break;
     }
     default:
@@ -317,7 +378,7 @@ void processJson(void *parameter)
   }
   case 2:
   {
-    rt_kprintf("进入status: 2\n");
+
     // 类型2的处理
     // 使用sscanf解析详细信息
     parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{device:%d}}", &device);
@@ -338,24 +399,70 @@ void processJson(void *parameter)
     }
     break;
   }
+  case 3:
+  {
+    int id;
+    parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%d,id:%d}}", &type, &id);
+    if (parsedItems != 2)
+    {
+      rt_kprintf("Error parsing JSON: %s\n", jsonMessage);
+      // 释放内存
+      free(jsonMessage);
+      return;
+    }
+    if (type == 0)
+    {
+      deleteDeviceById(deviceList, id);
+    }
+    else if (type == 1)
+    {
+      deletePlanById(planList, id);
+    }
+    break;
   }
-
+  }
   // 处理完毕后，释放内存
   free(jsonMessage);
 }
+void clearUsart()
+{
+  memset(usart1_rx_buffer, 0, sizeof(usart1_rx_buffer));
+  usart1_rx_index = 0;
+}
+void handleStateZero(void *pmt)
+{
+  while (checkReciveFlag == 1)
+  {
+    if (strstr((const char *)usart1_rx_buffer, "WIFI GOT IP") != NULL)
+    {
+      AT_Connect_Net_Flag = 1;
+      clearUsart();
+    }
 
+    if (strstr((const char *)usart1_rx_buffer, "OK") != NULL)
+    {
+      AT_OK_Flag = 1;
+      clearUsart();
+    }
+
+    if (strstr((const char *)usart1_rx_buffer, "ready") != NULL)
+    {
+      AT_Ready_Flag = 1;
+      clearUsart();
+    }
+    rt_thread_mdelay(20);
+  }
+}
 void reciveData()
 {
   if (usart1_rx_index == -1)
     usart1_rx_index++;
   else
   {
-    if (esp_command_flag == 0)
+    switch (esp_command_flag)
     {
-      usart1_rx_buffer[usart1_rx_index++] = usart1_c;
-    }
-    else if (esp_command_flag == 1)
-    {
+    case 1:
+
       if (usart1_rx_index < dataMaxLen)
       {
         dataLenStr[usart1_rx_index++] = usart1_c;
@@ -364,9 +471,9 @@ void reciveData()
       {
         rt_kprintf("data too long!\n");
       }
-    }
-    else if (esp_command_flag == 2)
-    {
+      break;
+    case 2:
+
       if (usart1_rx_index < dataLen)
       {
         realCommand[usart1_rx_index++] = usart1_c;
@@ -375,6 +482,10 @@ void reciveData()
       {
         rt_kprintf("data error!\n");
       }
+      break;
+    default:
+    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
+      break;
     }
   }
 }
@@ -386,26 +497,22 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
       esp_command_flag = 0;
     if (usart1_rx_index >= BUFFER_SIZE - 1)
     {
-      memset(usart1_rx_buffer, 0, sizeof(usart1_rx_buffer));
-      usart1_rx_index = 0;
+      clearUsart();
     }
     if (esp_flag == 1)
     {
       if (usart1_c == '+')
       {
-        // 开始接收一条新指令
-        memset(usart1_rx_buffer, 0, sizeof(usart1_rx_buffer));
-        usart1_rx_index = 0;
+        clearUsart();
       }
-      else if (strstr((const char *)usart1_rx_buffer, "+IPD,0,") != NULL)
+      else if (strstr((const char *)usart1_rx_buffer, "+IPD,0,") != NULL) // 获取到报文开头，准备获取数据长度
       {
         // 收到数据段长度
         esp_command_flag = 1;
         // 清空接收缓冲区，准备接收下一条指令
-        usart1_rx_index = 0;
-        memset(usart1_rx_buffer, 0, sizeof(usart1_rx_buffer));
+        clearUsart();
       }
-      else if (esp_command_flag == 1 && usart1_c == ':')
+      else if (esp_command_flag == 1 && usart1_c == ':') // 获取真实数据
       {
         esp_command_flag = 2;
         dataLen = atoi(dataLenStr);
@@ -414,7 +521,7 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
         realCommand = (char *)malloc((dataLen * sizeof(char)) + 1);
         realCommand[dataLen] = '\0';
       }
-      else if (usart1_rx_index == dataLen - 1 && esp_command_flag == 2)
+      else if (usart1_rx_index == dataLen - 1 && esp_command_flag == 2) // 处理数据
       {
         reciveData();
         parseAndProcessCommand(realCommand);

@@ -9,20 +9,19 @@ typedef struct
 {
     Time *time;
     Date *date;
-    Plan *plans;
+    PlanList *planList;
 } Timer;
 
-extern Timer *timerData;  
-extern int planCount;
-extern int deviceCount;
-int timerInit(Date *now_date, Time *now_time, Plan *now_plan);
-void setTimerAll(Date *now_date, Time *now_time, Plan *now_plan);
+extern Timer *timerData; 
+extern PlanList* planList;
+int timerInit(Date *now_date, Time *now_time, PlanList *planList);
+void setTimerAll(Date *now_date, Time *now_time, PlanList *planList);
 void setTimerDate(Date *now_date);
 void setTimerTime(Time *now_time);
-void setTimerPlan(Plan *now_plans);
+void setTimerPlan(PlanList *planLists);
 Date *getTimerDate();
 Time *getTimerTime();
-int timerRun(int deviceNum,int* device_status);
-int isTimeReached(const Plan *plan);
-
+int timerRun();
+int isTimeReached( Plan *plan);
+void insertTimerPlan(int device, Time time, int duration, Date beginDate, Date endDate);
 #endif /* TIMER_H */

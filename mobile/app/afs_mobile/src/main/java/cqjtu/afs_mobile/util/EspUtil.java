@@ -55,23 +55,25 @@ public class EspUtil {
             @Override
             public void run() {
                 try {
-
                     if (socket == null || socket.isClosed()) {
                         socket = new Socket(ip, port);
                     }
                     OutputStream outputStream = socket.getOutputStream();
+
                     // 发送消息
                     outputStream.write(message.getBytes());
-                    if (isReceiveData){
+                    if (isReceiveData) {
                         startReceivingData();
                     }
-                    if (!isReceivingData)stopReceivingData();
-                } catch (IOException e) {
+                    if (!isReceivingData) stopReceivingData();
+
+                } catch (IOException  e) {
                     e.printStackTrace();
                 }
             }
         }).start();
     }
+
 
     public void startReceivingData() {
         isReceivingData = true;
@@ -126,6 +128,9 @@ public class EspUtil {
         void onFailure(String errorMessage);
     }
     private class EspCommunicationTask extends AsyncTask<Void, String, Void> {
+        private static final long TIMEOUT_DURATION = 1500; // 2 seconds
+        private long lastDataReceivedTime;
+
         @Override
         protected Void doInBackground(Void... params) {
             try {
@@ -138,14 +143,22 @@ public class EspUtil {
 
                 // 在主线程中显示 Toast
                 publishProgress("连接成功");
-                checkClose();
+
+                lastDataReceivedTime = System.currentTimeMillis();
+
                 while (isReceivingData) {
                     String receivedData = bufferedReader.readLine();
                     if (receivedData != null) {
                         // 将耗时操作移动到主线程
                         publishProgress(receivedData);
+                        lastDataReceivedTime = System.currentTimeMillis();
                     }
 
+                    // 检测是否超过超时时间
+                    if (System.currentTimeMillis() - lastDataReceivedTime > TIMEOUT_DURATION) {
+                        // 超时，关闭连接
+                        stopReceivingData();
+                    }
                 }
             } catch (IOException e) {
                 if (isReceivingData) {
@@ -155,6 +168,7 @@ public class EspUtil {
             }
             return null;
         }
+
 
         @Override
         protected void onProgressUpdate(String... values) {
@@ -175,24 +189,6 @@ public class EspUtil {
                 }
             }
             // TODO: 处理接收到的数据（更新 UI 或执行其他操作）
-        }
-        public void checkClose() {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        // 等待1秒
-                        Thread.sleep(1000);
-
-                        // 在新线程中检查socket是否已关闭
-                        if (socket != null && !socket.isClosed()) {
-                            socket.close();
-                        }
-                    } catch (InterruptedException | IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }).start();
         }
     }
 }

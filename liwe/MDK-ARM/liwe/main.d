@@ -28,6 +28,7 @@ liwe/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
   ..\Core\Inc\i2c.h ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
+  ..\Core\Src\BPC_DECODE.h ..\Core\Src\define.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h \
   ..\RT-Thread\rtconfig.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdebug.h \

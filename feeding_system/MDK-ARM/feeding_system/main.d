@@ -36,8 +36,10 @@ feeding_system/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
-  ..\Core\Src\esp01s.h ..\Core\Src\feeding.h \
+  ..\Core\Src\esp01s.h ..\Core\Src\data_structure.h \
+  ..\Core\Src\feeding.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
-  ..\Core\Src\data_structure.h ..\Core\Src\timer.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h
+  ..\Core\Src\timer.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  ..\Core\Src\BPC_DECODE.h ..\Core\Src\define.h

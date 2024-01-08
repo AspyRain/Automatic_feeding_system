@@ -1,7 +1,11 @@
 package cqjtu.afs_mobile.util;
 
+import static cqjtu.afs_mobile.util.ToastUtil.showToast;
+
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,14 +31,13 @@ public class PlanAdapter extends ArrayAdapter<Plan> {
     private ConnectionInfo connectionInfo;
     private EspUtil espUtil;
     private Context context;
-    private ImageView deleteButton;
 
-    public PlanAdapter(Context context, List<Plan> dataList,ConnectionInfo connectionInfo) {
+    public PlanAdapter(Context context, List<Plan> dataList, ConnectionInfo connectionInfo) {
         super(context, 0, dataList);
         inflater = LayoutInflater.from(context);
-        this.context=context;
-        this.connectionInfo=connectionInfo;
-        espUtil=new EspUtil(context);
+        this.context = context;
+        this.connectionInfo = connectionInfo;
+        espUtil = new EspUtil(context);
         espUtil.setIp(connectionInfo.getIp());
         espUtil.setPort(connectionInfo.getPort());
     }
@@ -45,7 +48,7 @@ public class PlanAdapter extends ArrayAdapter<Plan> {
         ViewHolder holder;
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.item_feeding_device, parent, false);
+            convertView = inflater.inflate(R.layout.item_plan, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
@@ -60,22 +63,55 @@ public class PlanAdapter extends ArrayAdapter<Plan> {
             holder.planTime.setText(data.getTimeString());
             holder.beginDate.setText(data.getDateString(0));
             holder.endDate.setText(data.getDateString(1));
-            holder.planDuration.setText(data.getDuration());
+            holder.planDuration.setText(Integer.toString(data.getDuration())+"s");
         }
-        final ImageView deleteButton=holder.deleteButton;
+        final ImageView deleteButton = holder.deleteButton;
+        if (data != null) {
+            deleteButton.setTag(data.getId());
+        }
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle("确认删除?");
-                builder.setMessage("是否删除该计划");
-
+                showConfirmationDialog(context);
             }
         });
         return convertView;
     }
-    public void positiveAction(){
+    private void showConfirmationDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
+        // 设置对话框标题
+        builder.setTitle("确认删除吗");
+
+        // 设置对话框消息
+        builder.setMessage("是否删除该Plan");
+
+        // 设置确认按钮
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                positiveAction(id);
+                dialog.dismiss(); // 关闭对话框
+            }
+        });
+
+        // 设置取消按钮
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                showToast("取消删除!",context);
+                dialog.dismiss(); // 关闭对话框
+            }
+        });
+
+        // 创建并显示对话框
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    public void positiveAction(int id){
+        espUtil.sendMessage("{status:3,detail:{type:1,id:"+id+"}}",context,false);
+        new Handler().postDelayed(() -> {
+            espUtil.sendMessage("{status:0,detail:{type:1}}",context,true);
+        }, 1500);
     }
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView planTime;
@@ -85,6 +121,7 @@ public class PlanAdapter extends ArrayAdapter<Plan> {
         TextView planId;
         TextView deviceId;
         ImageView deleteButton;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             planTime = itemView.findViewById(R.id.planTime);
@@ -95,7 +132,7 @@ public class PlanAdapter extends ArrayAdapter<Plan> {
             deviceId = itemView.findViewById(R.id.deviceId);
             deleteButton = itemView.findViewById(R.id.deletePlan);
         }
-
     }
+
 
 }

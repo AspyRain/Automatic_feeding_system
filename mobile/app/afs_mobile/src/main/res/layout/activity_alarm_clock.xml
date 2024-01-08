@@ -61,12 +61,13 @@
             android:layout_gravity="center"
             android:orientation="horizontal"
             android:gravity="center">
+
             <LinearLayout
-                android:id="@+id/add_feedingDevice"
+                android:id="@+id/addPlan"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:background="@mipmap/add"
-                android:orientation="horizontal"/>
+                android:orientation="horizontal" />
 
 
         </LinearLayout>

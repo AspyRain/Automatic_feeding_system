@@ -31,7 +31,6 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -80,7 +79,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN Private defines */
 
-#define BUFFER_SIZE 200
+#define BUFFER_SIZE 250
 #define dataMaxLen 4
 extern char usart1_rx_buffer[BUFFER_SIZE];
 extern int usart1_rx_index;
@@ -88,8 +87,12 @@ extern int feedNumFlag;
 extern int esp_flag;
 extern int timeout_flag;
 extern int esp_command_flag;
+extern int AT_OK_Flag;
+extern int AT_Ready_Flag;
+extern int AT_Connect_Net_Flag;
+extern char* status;
 /* USER CODE END Private defines */
-
+void clearUsart();
 #ifdef __cplusplus
 }
 #endif

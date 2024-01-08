@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:layout_gravity="center"
-    android:minHeight="200dp"
+    android:minHeight="160dp"
     android:orientation="vertical">
 
     <LinearLayout
@@ -19,7 +19,7 @@
             android:id="@+id/dialogTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="添加喂食设备"
+            android:text="添加投喂设备"
             android:textSize="20sp"
             android:textStyle="bold"
             android:background="@color/bar_green"
