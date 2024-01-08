@@ -1,10 +1,10 @@
-liwe/mempool.o: ..\Middlewares\Third_Party\RealThread_RTOS\src\mempool.c \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rthw.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h \
-  ..\RT-Thread\rtconfig.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdebug.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdef.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdarg.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/src/mempool.c
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rthw.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtthread.h
+liwe\mempool.o: ../RT-Thread/rtconfig.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtdebug.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtdef.h
+liwe\mempool.o: E:\keil\ARM\ARMCC\bin\..\include\stdarg.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtservice.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh_api.h
+liwe\mempool.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh_config.h
