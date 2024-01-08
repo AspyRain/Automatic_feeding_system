@@ -1,39 +1,39 @@
-liwe/bpc_decode.o: ..\Core\Src\BPC_DECODE.c ..\Core\Src\BPC_DECODE.h \
-  ..\Core\Src\define.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdint.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal.h \
-  ..\Core\Inc\stm32f1xx_hal_conf.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_def.h \
-  ..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f1xx.h \
-  ..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\stm32f103xb.h \
-  ..\Drivers\CMSIS\Include\core_cm3.h \
-  ..\Drivers\CMSIS\Include\cmsis_version.h \
-  ..\Drivers\CMSIS\Include\cmsis_compiler.h \
-  ..\Drivers\CMSIS\Include\cmsis_armclang.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\arm_compat.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\arm_acle.h \
-  ..\Drivers\CMSIS\Device\ST\STM32F1xx\Include\system_stm32f1xx.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\Legacy\stm32_hal_legacy.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stddef.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rcc_ex.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_gpio_ex.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_exti.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_dma_ex.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_cortex.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_i2c.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
-  ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h \
-  ..\RT-Thread\rtconfig.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdebug.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdef.h \
-  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdarg.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
-  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
-  ..\Core\Inc\main.h
+liwe\bpc_decode.o: ..\Core\Src\BPC_DECODE.c
+liwe\bpc_decode.o: ..\Core\Src\BPC_DECODE.h
+liwe\bpc_decode.o: ..\Core\Src\define.h
+liwe\bpc_decode.o: E:\keil\ARM\ARMCC\bin\..\include\stdint.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
+liwe\bpc_decode.o: ../Core/Inc/stm32f1xx_hal_conf.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Include/core_cm3.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Include/cmsis_version.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
+liwe\bpc_decode.o: ../Drivers/CMSIS/Device/ST/STM32F1xx/Include/system_stm32f1xx.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
+liwe\bpc_decode.o: E:\keil\ARM\ARMCC\bin\..\include\stddef.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_rcc_ex.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio_ex.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_exti.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma_ex.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_flash_ex.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_i2c.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_pwr.h
+liwe\bpc_decode.o: ../Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h
+liwe\bpc_decode.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtthread.h
+liwe\bpc_decode.o: ../RT-Thread/rtconfig.h
+liwe\bpc_decode.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtdebug.h
+liwe\bpc_decode.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtdef.h
+liwe\bpc_decode.o: E:\keil\ARM\ARMCC\bin\..\include\stdarg.h
+liwe\bpc_decode.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtservice.h
+liwe\bpc_decode.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh_api.h
+liwe\bpc_decode.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh_config.h
+liwe\bpc_decode.o: ../Core/Inc/main.h

@@ -2,11 +2,12 @@
 #include "rtthread.h"
 #include "stm32f1xx_hal.h"
 #include "main.h"
+
 uint8_t Buff[BPC_EFFECT_NUM];
 uint8_t p=0;
 uint8_t temp=4;
 
-//???????
+
 uint8_t  flag=0;
 uint32_t x   =0;
 uint32_t y   =0;
@@ -29,7 +30,7 @@ uint8_t DATA[BPC_EFFECT_DATA];
 //       2 有效数据第一阶段校验错误
 //       3 有效数据第二阶段校验错误
 //       4 解码成功
-uint8_t BPC_DECODE(uint8_t *Buff, uint8_t *DATA)
+uint8_t BPC_DECODE(uint8_t *Buff, uint8_t *DATA)//解码函数
 {
 	uint8_t i;
 	uint8_t x=0;
@@ -170,86 +171,100 @@ uint8_t BPC_DECODE(uint8_t *Buff, uint8_t *DATA)
 	return 4;
 	/************************解码数据************************/
 }
-void BPC_timer_callback(void *parameter)
+void BPC_timer_callback(void *parameter) 
 {
-    if (flag)
-    {
-        if (p < BPC_EFFECT_NUM)
-        {
-            if (z < RT_TICK_PER_SECOND)
-            {
-                z++;
-                if (GPIO_ReadInputDataBit(NTCO_GPIO_Port, NTCO_Pin))
-                    i++;
-            }
-            else
-            {
-                if (i >= Zero_Low_Threshold && i <= Zero_High_Threshold)
-                {
-                    temp = 0;
-                }
-                else if (i >= One_Low_Threshold && i <= One_High_Threshold)
-                {
-                    temp = 1;
-                }
-                else if (i >= Two_Low_Threshold && i <= Two_High_Threshold)
-                {
-                    temp = 2;
-                }
-                else if (i >= Three_Low_Threshold && i <= Three_High_Threshold)
-                {
-                    temp = 3;
-                }
-                else
-                {
-                    temp = 4;
-                }
-                Buff[p] = temp;
-                p++;
-                z = 0;
-                i = 0;
-            }
-        }
-        else
-        {
-            p = 0;
-            flag = 0;
-            flag2 = 1;
-        }
-    }
-    else
-    {
-        if (x < RT_TICK_PER_SECOND)
-        {
-            x++;
-            if (!GPIO_ReadInputDataBit(NTCO_GPIO_Port, NTCO_Pin))
-                y++;
-        }
-        else
-        {
-            if (y >= Sys_Tick_Threshold)
-            {
-                flag = 1;
-                flag1 = 1;
-            }
-            y = 0;
-            x = 0;
-        }
-    }
-}
 
+	if(flag)                     //获取NTCO引脚有效数据
+	{
+		if(p<BPC_EFFECT_NUM)
+		{
+			if(z<Sys_Tick_Period)
+		  {
+			  z++;
+			    if (GPIO_ReadInputDataBit(NTCO_GPIO_Port, NTCO_Pin))
+				  i++;                 //i取值范围:0~~Sys_Tick_Period
+		  }
+		  else
+		  {
+			  if(i>=Zero_Low_Threshold && i<=Zero_High_Threshold)
+			  {
+				  temp=0;              //四进制"0"
+			  }
+			  else if(i>=One_Low_Threshold && i<=One_High_Threshold)
+			  {
+				  temp=1;              //四进制"1"
+			  }
+			  else if(i>=Two_Low_Threshold && i<=Two_High_Threshold)
+			  {
+				  temp=2;              //四进制"2"
+			  }
+			  else if(i>=Three_Low_Threshold && i<=Three_High_Threshold)
+			  {
+				  temp=3;              //四进制"3"
+			  }
+			  else
+			  {
+				  temp=4;              //无意义
+			  }
+			  Buff[p]=temp;          //写入有效数据缓冲区
+			  p++;
+			  z=0;
+			  i=0;
+		  }
+		}
+		else
+		{
+			p=0;
+			flag=0;
+			flag2=1;
+		}
+	}
+	else                         //等待帧起始标志位
+	{
+		if(x<Sys_Tick_Period)      //对NTCO引脚进行帧起始标志位采样
+	  {
+		  x++;
+		  if (!GPIO_ReadInputDataBit(NTCO_GPIO_Port, NTCO_Pin))
+			  y++;                   //y取值范围:0~~Sys_Tick_Period
+	  }
+	  else                       //采样周期结束，判断是否为帧起始标志位
+	  {
+		  if(y>=Sys_Tick_Threshold)//检测到帧起始标志位
+			{
+			  flag=1;
+				flag1=1;
+			}
+			y=0;
+		  x=0;
+	  }
+	}
+}
+            
 uint8_t GPIO_ReadInputDataBit(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
-    GPIO_PinState pin_state = HAL_GPIO_ReadPin(GPIOx, GPIO_Pin);
-    return (pin_state == GPIO_PIN_SET) ? (uint8_t)Bit_SET : (uint8_t)Bit_RESET;
+  uint8_t bitstatus = 0x00;
+  
+  /* Check the parameters */
+  assert_param(IS_GPIO_ALL_PERIPH(GPIOx));
+  assert_param(IS_GET_GPIO_PIN(GPIO_Pin)); 
+  
+  if (HAL_GPIO_ReadPin(GPIOx, GPIO_Pin) != GPIO_PIN_RESET)
+  {
+    bitstatus = (uint8_t)GPIO_PIN_SET;
+  }
+  else
+  {
+    bitstatus = (uint8_t)GPIO_PIN_RESET;
+  }
+  
+  return bitstatus;
 }
-
 void startGetTime(){
 	 rt_timer_t my_timer;
-
+	
     // 创建定时器
     my_timer = rt_timer_create("BPC_timer_callback", BPC_timer_callback, RT_NULL, Sys_Tick_Reload, RT_TIMER_FLAG_PERIODIC);
-
+rt_kprintf("timer is running!\n");
     // 启动定时器
     if (my_timer != RT_NULL)
     {
