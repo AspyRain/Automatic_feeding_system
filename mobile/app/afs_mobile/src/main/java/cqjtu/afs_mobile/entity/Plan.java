@@ -2,21 +2,19 @@ package cqjtu.afs_mobile.entity;
 
 
 import java.io.Serializable;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public class Plan implements Serializable {
     private long id;
     private long device;
-    private Date time;
+    private Time time;
     private int duration;
     private Date beginDate;
     private Date endDate;
 
 
-    public Plan(long id, long device, Date time, int duration, Date beginDate, Date endDate) {
+    public Plan(long id, long device, Time time, int duration, Date beginDate, Date endDate) {
         this.id = id;
         this.device = device;
         this.time = time;
@@ -43,11 +41,11 @@ public class Plan implements Serializable {
         this.device = device;
     }
 
-    public Date getTime() {
+    public Time getTime() {
         return time;
     }
 
-    public void setTime(Date time) {
+    public void setTime(Time time) {
         this.time = time;
     }
 
@@ -63,16 +61,14 @@ public class Plan implements Serializable {
         return beginDate;
     }
     public String getDateString(int flag){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM-dd", Locale.getDefault());
         if (flag==0){
-            return dateFormat.format(getBeginDate());
+            return ""+beginDate.getMonth()+"月"+beginDate.getDay()+"日";
         }else {
-            return dateFormat.format(getEndDate());
+            return ""+endDate.getMonth()+"月"+endDate.getDay()+"日";
         }
     }
     public String getTimeString(){
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-        return timeFormat.format(getTime());
+        return ""+time.getHours()+":"+time.getMinute();
     }
     public void setBeginDate(Date beginDate) {
         this.beginDate = beginDate;

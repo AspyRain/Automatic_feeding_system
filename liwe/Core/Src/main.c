@@ -8,7 +8,10 @@
 #include <rtthread.h>
 
 void SystemClock_Config(void);
-
+void timeInit(void *pmt)
+{
+  startGetTime();
+}
 int main(void)
 {
 
@@ -22,7 +25,11 @@ int main(void)
 	rt_thread_mdelay(100);
   rt_kprintf("3秒之后开始授时\n");
   rt_thread_mdelay(3000);
-  startGetTime();
+  rt_thread_t timeInitThread = rt_thread_create("timeInit",timeInit,RT_NULL,2048,4,10);
+  if (timeInitThread != RT_NULL)
+  {
+    rt_thread_startup(timeInitThread);
+  }
 
   while (1)
   {

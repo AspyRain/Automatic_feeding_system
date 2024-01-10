@@ -46,6 +46,6 @@
 "liwe\msh.o"
 "liwe\shell.o"
 --strict --scatter "liwe\liwe.sct"
---summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "liwe.map" -o liwe\liwe.axf

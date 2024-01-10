@@ -1,17 +1,18 @@
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/components/finsh/msh.c
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtthread.h
-liwe\msh.o: ../RT-Thread/rtconfig.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtdebug.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtdef.h
-liwe\msh.o: E:\keil\ARM\ARMCC\bin\..\include\stdarg.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/include/rtservice.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh_api.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh_config.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/components/finsh/msh.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/finsh.h
-liwe\msh.o: E:\keil\ARM\ARMCC\bin\..\include\stdio.h
-liwe\msh.o: E:\keil\ARM\ARMCC\bin\..\include\ctype.h
-liwe\msh.o: E:\keil\ARM\ARMCC\bin\..\include\stdlib.h
-liwe\msh.o: E:\keil\ARM\ARMCC\bin\..\include\stdint.h
-liwe\msh.o: E:\keil\ARM\ARMCC\bin\..\include\string.h
-liwe\msh.o: ../Middlewares/Third_Party/RealThread_RTOS/finsh/shell.h
+liwe/msh.o: \
+  ..\Middlewares\Third_Party\RealThread_RTOS\components\finsh\msh.c \
+  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtthread.h \
+  ..\RT-Thread\rtconfig.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdebug.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtdef.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdarg.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\components\finsh\msh.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\ctype.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdint.h \
+  D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
+  ..\Middlewares\Third_Party\RealThread_RTOS\finsh\shell.h

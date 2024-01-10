@@ -4,8 +4,9 @@
 #include "feeding.h"
 #include <string.h>
 #include "main.h"
+#include "oled.h"
 Timer *timerData = NULL;
-PlanList *planList =NULL;
+PlanList *planList = NULL;
 int timerInit(Date *now_date, Time *now_time, PlanList *planList)
 {
 
@@ -43,7 +44,7 @@ void setTimerDate(Date *now_date)
     {
         // 分配新的日期空间
         timerData->date = rt_malloc(sizeof(Date));
-        
+
         // 将新的日期数据复制到分配的空间中
         memcpy(timerData->date, now_date, sizeof(Date));
     }
@@ -62,7 +63,7 @@ void setTimerTime(Time *now_time)
     {
         // 分配新的时间空间
         timerData->time = rt_malloc(sizeof(Time));
-        
+
         // 将新的时间数据复制到分配的空间中
         memcpy(timerData->time, now_time, sizeof(Time));
     }
@@ -87,9 +88,9 @@ void setTimerPlan(PlanList *planList)
     }
 }
 
-
-void insertTimerPlan(int device, Time time, int duration, Date beginDate, Date endDate){
-    insertPlan(timerData->planList,device,time,duration,beginDate,endDate);
+void insertTimerPlan(int device, Time time, int duration, Date beginDate, Date endDate)
+{
+    insertPlan(timerData->planList, device, time, duration, beginDate, endDate);
 }
 Date *getTimerDate()
 {
@@ -105,21 +106,40 @@ int timerRun()
 {
     int result = 0;
     timerData->time->s += 1;
+    is_Change[5]=1;
     if (timerData->time->s == 60)
     {
         timerData->time->s = 0;
         timerData->time->m += 1;
+        is_Change[4]=1;
     }
     if (timerData->time->m == 60)
     {
         timerData->time->m = 0;
         timerData->time->h += 1;
+        is_Change[3]=1;
     }
     if (timerData->time->h == 24)
     {
         result = 1;
+        timerData->time->s = 0;
+        timerData->time->m = 0;
+        timerData->time->h = 0;
+        timerData->date->day += 1;
+        is_Change[2]=1;
     }
-    rt_kprintf("现在的时间是:%d时%d分%d秒\n",timerData->time->h,timerData->time->m,timerData->time->s);
+    if (timerData->date->day>=31){
+        timerData->date->day = 1;
+        timerData->date->month+=1;
+        is_Change[1]=1;
+    }
+    if (timerData->date->month>12){
+        timerData->date->year+=1;
+        timerData->date->month = 1;
+        is_Change[0]=1;
+    }
+    if (timerData->time->h%12==0&&timerData->time->m==0&&timerData->time->s==0)result=1;
+    rt_kprintf("现在的时间是:%d时%d分%d秒\n", timerData->time->h, timerData->time->m, timerData->time->s);
     Plan *plans = planList->plans;
     int planNum = timerData->planList->length;
 
@@ -134,30 +154,32 @@ int timerRun()
             }
         }
     }
-
     return result;
 }
 
 int isTimeReached(Plan *plan)
 {
-    if (plan->isRuning==-1){
-// Check if the current date is within the plan's begin and end date
-    if (
-        (timerData->date->month > plan->beginDate.month || (timerData->date->month == plan->beginDate.month && timerData->date->day >= plan->beginDate.day)) &&
-        (timerData->date->month < plan->endDate.month || (timerData->date->month == plan->endDate.month && timerData->date->day <= plan->endDate.day)))
+    if (plan->isRuning == -1)
     {
-        // Check if the current time is equal to the plan's time
-        if (timerData->time->h == plan->time.h && timerData->time->m == plan->time.m)
+        // Check if the current date is within the plan's begin and end date
+        if (
+            (timerData->date->month > plan->beginDate.month || (timerData->date->month == plan->beginDate.month && timerData->date->day >= plan->beginDate.day)) &&
+            (timerData->date->month < plan->endDate.month || (timerData->date->month == plan->endDate.month && timerData->date->day <= plan->endDate.day)))
         {
-            plan->isRuning=0;
-            return 1; // Time is reached
+            // Check if the current time is equal to the plan's time
+            if (timerData->time->h == plan->time.h && timerData->time->m == plan->time.m)
+            {
+                plan->isRuning = 0;
+                return 1; // Time is reached
+            }
         }
     }
-    }else {
-        plan->isRuning=plan->isRuning+1;
-        if (plan->isRuning>=plan->duration)plan->isRuning=0;
+    else
+    {
+        plan->isRuning = plan->isRuning + 1;
+        if (plan->isRuning >= plan->duration)
+            plan->isRuning = 0;
     }
-    
 
     return 0; // Time is not reached
 }

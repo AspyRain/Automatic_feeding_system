@@ -36,6 +36,6 @@ feeding_system/bpc_decode.o: ..\Core\Src\BPC_DECODE.c \
   ..\Middlewares\Third_Party\RealThread_RTOS\include\rtservice.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_api.h \
   ..\Middlewares\Third_Party\RealThread_RTOS\finsh\finsh_config.h \
-  ..\Core\Inc\main.h ..\Core\Src\timer.h \
+  ..\Core\Inc\main.h ..\Core\Src\data_structure.h ..\Core\Src\timer.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdlib.h \
-  ..\Core\Src\data_structure.h
+  ..\Core\Src\oled.h ..\Core\Inc\i2c.h

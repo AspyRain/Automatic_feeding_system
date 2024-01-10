@@ -33,6 +33,7 @@
 #include "timer.h"
 #include <stdio.h>
 #include "BPC_DECODE.h"
+#include "oled.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -119,21 +120,22 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
-
+  OLED_Init();
+  OLED_Clear();
   /* USER CODE BEGIN 2 */
   HAL_UART_Receive_IT(&huart1, (uint8_t *)&usart1_c, 1);
+  OLED_ShowStart();
   /* USER CODE BEGIN 2 */
   /* USER CODE END 2 */
   // 获取初始时间
-    checkReciveFlag = 1;
-    rt_thread_t checkRecive = rt_thread_create("checkRecive", handleStateZero, RT_NULL, 1024, 4, 10);
-    if (checkRecive != RT_NULL)
-    {
-      rt_thread_startup(checkRecive);
-      rt_kprintf("初始化ESP01S中\n");
-      Esp01s_Init("AspyRain", "Lxr20030106", "8080");
-    }
-
+  checkReciveFlag = 1;
+  rt_thread_t checkRecive = rt_thread_create("checkRecive", handleStateZero, RT_NULL, 1024, 1, 10);
+  if (checkRecive != RT_NULL)
+  {
+    rt_thread_startup(checkRecive);
+    rt_kprintf("初始化ESP01S中\n");
+    Esp01s_Init("AspyRain", "Lxr20030106", "8080");
+  }
 
   /* USER CODE END 2 */
   // 例子插入一个计划
@@ -141,28 +143,36 @@ int main(void)
   newPlanList(&planList);
   newDeviceList(&deviceList);
   insertPlan(planList, 1, *newTime(10, 5, 10), 5, *newDate(2023, 12, 27), *newDate(2023, 12, 28));
-  insertPlan(planList, 2, *newTime(14, 19, 10), 20, *newDate(2024, 1,7), *newDate(2024, 12, 29));
+  insertPlan(planList, 2, *newTime(14, 19, 10), 20, *newDate(2024, 1, 7), *newDate(2024, 12, 29));
 
   insertDevice(deviceList, "feed_1");
   insertDevice(deviceList, "feed_2");
   insertDevice(deviceList, "feed_3");
   timerInit(newDate(2024, 1, 8), newTime(14, 18, 50), planList);
-  // rt_thread_t timerThread = rt_thread_create("timerThread", timerThreadEntry, RT_NULL, 2048, 4, 10);
-  // if (timerThread != RT_NULL)
-  // {
-  //   rt_thread_startup(timerThread);
-  // }
-  rt_thread_t timeInitThread = rt_thread_create("timeInit",timeInit,RT_NULL,2048,4,10);
-  if (timeInitThread != RT_NULL)
+
+  //  getCurrentTime(1);
+  rt_thread_t timerThread = rt_thread_create("timerThread", timerThreadEntry, RT_NULL, 2048, 3, 10);
+  if (timerThread != RT_NULL)
   {
-    rt_thread_startup(timeInitThread);
+    rt_thread_startup(timerThread);
+  }
+  rt_thread_t showTimeThread = rt_thread_create("showTimeThread", OLED_Showtime, RT_NULL, 1024, 3, 10);
+  if (showTimeThread != RT_NULL)
+  {
+    is_Change[0] = 1;
+    is_Change[1] = 1;
+    is_Change[2] = 1;
+    is_Change[3] = 1;
+    is_Change[4] = 1;
+    is_Change[5] = 1;
+    rt_thread_startup(showTimeThread);
   }
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     /* USER CODE END WHILE */
-    rt_thread_mdelay(1000);
+    rt_thread_mdelay(20);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -215,29 +225,27 @@ void parseAndProcessCommand(char *command)
     jsonMessage = (char *)malloc(strlen(command) + 1);
     rt_kprintf("创建OK\n");
     rt_kprintf("赋值jsonMessage\n");
-    if (jsonMessage != NULL && command != NULL) {
-    strncpy(jsonMessage, command, strlen(command) + 1);
-}
-    rt_kprintf("复制成功\n");
-      rt_kprintf("jsonString:%s\n",jsonMessage);
-    if (jsonMessage!=NULL){
-      rt_kprintf("进入处理线程\n");
-      
-    // 创建线程并传递 command 参数
-    rt_thread_t processJsonThread = rt_thread_create("processJson", processJson, RT_NULL, 2048, 5, 10);
-    if (processJsonThread != RT_NULL)
+    if (jsonMessage != NULL && command != NULL)
     {
-      // 启动线程
-      rt_thread_startup(processJsonThread);
+      strncpy(jsonMessage, command, strlen(command) + 1);
     }
-    }
+    rt_kprintf("复制成功\n");
+    rt_kprintf("jsonString:%s\n", jsonMessage);
+    if (jsonMessage != NULL)
+    {
+      rt_kprintf("进入处理线程\n");
 
+      // 创建线程并传递 command 参数
+      rt_thread_t processJsonThread = rt_thread_create("processJson", processJson, RT_NULL, 3096, 3, 10);
+      if (processJsonThread != RT_NULL)
+      {
+        // 启动线程
+        rt_thread_startup(processJsonThread);
+      }
+    }
   }
 }
-void timeInit(void *pmt)
-{
-  startGetTime();
-}
+
 void timerThreadEntry(void *pmt)
 {
   int result;
@@ -246,7 +254,7 @@ void timerThreadEntry(void *pmt)
     result = timerRun();
     if (result == 1)
     {
-      startGetTime();
+      getCurrentTime(0);
     }
     rt_thread_mdelay(1000);
   }
@@ -256,15 +264,15 @@ void processJson(void *parameter)
   int status;
   int type;
   int device;
-  int h, m, s;
+  int h, m;
   int duration;
-  int beginYear, beginMonth, beginDay;
-  int endYear, endMonth, endDay;
+  int beginMonth, beginDay;
+  int endMonth, endDay;
   // 使用sscanf进行简单的解析
 
   // 使用sscanf进行简单的解析
   int parsedItems = sscanf(jsonMessage, "{status:%d,", &status);
-  rt_kprintf("status:%d\n",status);
+  rt_kprintf("status:%d\n", status);
   // 检查解析是否成功
   if (parsedItems != 1)
   {
@@ -354,20 +362,20 @@ void processJson(void *parameter)
     case 1:
     {
       rt_kprintf("type:1\n");
-      parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%*d,{%d,:%d,%d,%d.%d,:%d,%d,%d.:%d,%d,%d}}}}",
-                           &device, &h, &m, &s, &duration, &beginYear, &beginMonth, &beginDay, &endYear, &endMonth, &endDay);
+      parsedItems = sscanf(jsonMessage, "{status:%*d,detail:{type:%*d,{%d,:%d,%d.%d,:%d,%d.:%d,%d}}}",
+                           &device, &h, &m, &duration, &beginMonth, &beginDay, &endMonth, &endDay);
       // 检查解析是否成功
-      if (parsedItems != 11)
+      if (parsedItems != 8)
       {
         rt_kprintf("Error parsing JSON: %s\n", jsonMessage);
         // 释放内存
         free(jsonMessage);
         return;
       }
-      rt_kprintf("获取完plan数据\n");
+      rt_kprintf("获取完plan数据:start:%d:%d,during:%d月%d日-%d月%d日\n", h, m, beginMonth, beginDay, endMonth, endDay);
       // 在这里执行新建计划的操作，你可以将解析得到的数据传递给相应的函数
-      insertPlan(planList,device, *newTime(h, m, s), duration, *newDate(beginYear, beginMonth, beginDay), *newDate(endYear, endMonth, endDay));
-      espSend("OK\n",1);
+      insertPlan(planList, device, *newTime(h, m, 0), duration, *newDate(0, beginMonth, beginDay), *newDate(0, endMonth, endDay));
+      espSend("OK\n", 1);
       break;
     }
     default:
@@ -484,7 +492,7 @@ void reciveData()
       }
       break;
     default:
-    usart1_rx_buffer[usart1_rx_index++] = usart1_c;
+      usart1_rx_buffer[usart1_rx_index++] = usart1_c;
       break;
     }
   }

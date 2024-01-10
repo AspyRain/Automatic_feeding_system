@@ -1,9 +1,6 @@
 package cqjtu.afs_mobile;
 
 import static cqjtu.afs_mobile.util.JsonUtil.parseDeviceJsonString;
-import static cqjtu.afs_mobile.util.JsonUtil.parsePlanJsonString;
-import static cqjtu.afs_mobile.util.JsonUtil.parseTime;
-import static cqjtu.afs_mobile.util.JsonUtil.planToJsonString;
 import static cqjtu.afs_mobile.util.ToastUtil.showToast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,16 +17,16 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.TimePicker;
 
-import java.sql.Time;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import cqjtu.afs_mobile.entity.ConnectionInfo;
+import cqjtu.afs_mobile.entity.Date;
 import cqjtu.afs_mobile.entity.FeedingDevice;
 import cqjtu.afs_mobile.entity.Plan;
+import cqjtu.afs_mobile.entity.Time;
 import cqjtu.afs_mobile.util.EspUtil;
 import cqjtu.afs_mobile.util.FeedingDeviceAdapter;
 import cqjtu.afs_mobile.util.FeedingDeviceSpinnerAdapter;
@@ -96,30 +93,23 @@ public class addPlan extends AppCompatActivity implements EspUtil.EspDataListene
                 // 封装时间数据
                 int hour = tp_time.getHour();
                 int minute = tp_time.getMinute();
-                Calendar calendar = Calendar.getInstance();
-                calendar.set(Calendar.HOUR_OF_DAY, hour);
-                calendar.set(Calendar.MINUTE, minute);
 
                 // 设置计划时间
-                plan.setTime(calendar.getTime());
+                plan.setTime(new Time(hour,minute));
 
                 // 封装起始日期数据
                 int beginMonth = beginMonthPicker.getValue();
                 int beginDay = beginDayPicker.getValue();
-                calendar.set(Calendar.MONTH, beginMonth - 1);
-                calendar.set(Calendar.DAY_OF_MONTH, beginDay);
 
                 // 设置计划起始日期
-                plan.setBeginDate(calendar.getTime());
+                plan.setBeginDate(new Date(beginMonth,beginDay));
 
                 // 封装结束日期数据
                 int endMonth = endMonthPicker.getValue();
                 int endDay = endDayPicker.getValue();
-                calendar.set(Calendar.MONTH, endMonth - 1);
-                calendar.set(Calendar.DAY_OF_MONTH, endDay);
 
                 // 设置计划结束日期
-                plan.setEndDate(calendar.getTime());
+                plan.setEndDate(new Date(endMonth,endDay));
 
                 // 封装设备ID和持续时间
                 if (isDeviceSelected) {
@@ -132,7 +122,7 @@ public class addPlan extends AppCompatActivity implements EspUtil.EspDataListene
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("plan",plan);
                         setResult(7, resultIntent);
-                        finish(); // 关闭当前 Activity
+                        addPlan.this.finish(); // 关闭当前 Activity
                     } else {
                         showToast("请输入持续时间", addPlan.this);
                     }

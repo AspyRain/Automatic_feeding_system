@@ -4,6 +4,7 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 #define RT_USING_FINSH
+
 // <<< Use Configuration Wizard in Context Menu >>>
 // <h>Basic Configuration
 // <o>Maximal level of thread priority <8-256>
@@ -11,7 +12,7 @@
 #define RT_THREAD_PRIORITY_MAX 32
 
 // <o>OS tick per second
-//  <i>Default: 100   (10ms)
+//  <i>Default: 1000   (1ms)
 #define RT_TICK_PER_SECOND 1000
 
 // <o>Alignment size for CPU architecture data access

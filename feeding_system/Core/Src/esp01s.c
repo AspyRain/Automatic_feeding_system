@@ -24,46 +24,77 @@ void Esp01s_Init(char *ip, char *password, char *port)
   // rt_thread_mdelay(1000);
   status = "AT+CWMODE=1";
   sendData(&huart1, "AT+CWMODE=1\r\n");
-  while (AT_OK_Flag == 0)
-  {
-    rt_thread_mdelay(50);
-  }
-  AT_OK_Flag = 0;
+  waitCommand("OK",10000);
   status = "AT+CWJAP";
   sprintf(command, "AT+CWJAP=\"%s\",\"%s\"\r\n", ip, password);
   sendData(&huart1, command);
-  while (AT_OK_Flag == 0)
-  {
-    rt_thread_mdelay(50);
-  }
-  AT_OK_Flag = 0;
-  while (AT_Connect_Net_Flag == 0)
-  {
-    rt_thread_mdelay(50);
-  }
+  waitCommand("OK",10000);
+  waitCommand("Connect_Net",10000);
   AT_Connect_Net_Flag = 0;
   status = "AT+CIPMUX=1";
   sprintf(command, "AT+CIPMUX=1\r\n");
   sendData(&huart1, command);
-  while (AT_OK_Flag == 0)
-  {
-    rt_thread_mdelay(50);
-  }
-  AT_OK_Flag = 0;
+  waitCommand("OK",10000);
   status = "AT+CIPSERVER=1";
   sprintf(command, "AT+CIPSERVER=1,%s\r\n", port);
   sendData(&huart1, command);
-  while (AT_OK_Flag == 0)
-  {
-    rt_thread_mdelay(50);
-  }
-  AT_OK_Flag = 0;
+  waitCommand("OK",10000);
   esp_flag = 1;
   HAL_GPIO_WritePin(esp_enable_flag_GPIO_Port, esp_enable_flag_Pin, GPIO_PIN_SET);
   // 清空接收缓冲区
   huart1.Instance->DR; // 读取数据寄存器，将接收缓冲区中的数据清空
   // 重新启用USART1接收中断
   rt_kprintf("初始化完成\n");
+}
+void waitCommand(char *command, uint32_t timeout_ms)
+{
+  uint32_t start_time = rt_tick_get();
+  
+  if (strcmp(command, "OK") == 0)
+  {
+    while (AT_OK_Flag == 0)
+    {
+      rt_thread_mdelay(50);
+      
+      // 检查是否超过了超时时间
+      if ((rt_tick_get() - start_time) > timeout_ms)
+      {
+        rt_kprintf("等待 OK 超时\n");
+        break;
+      }
+    }
+    AT_OK_Flag = 0;
+  }
+  else if (strcmp(command, "Connect_Net") == 0)
+  {
+    while (AT_Connect_Net_Flag == 0)
+    {
+      rt_thread_mdelay(50);
+      
+      // 检查是否超过了超时时间
+      if ((rt_tick_get() - start_time) > timeout_ms)
+      {
+        rt_kprintf("等待 Connect_Net 超时\n");
+        break;
+      }
+    }
+    AT_Connect_Net_Flag = 0;
+  }
+  else if (strcmp(command, "Ready") == 0)
+  {
+    while (AT_Ready_Flag == 0)
+    {
+      rt_thread_mdelay(50);
+      
+      // 检查是否超过了超时时间
+      if ((rt_tick_get() - start_time) > timeout_ms)
+      {
+        rt_kprintf("等待 Ready 超时\n");
+        break;
+      }
+    }
+    AT_Ready_Flag = 0;
+  }
 }
 
 void espSend(char *message, int enterFlag)
@@ -77,14 +108,11 @@ void espSend(char *message, int enterFlag)
   sprintf(command, "AT+CIPSEND=0,%d\r\n", strlen(message));
   rt_kprintf("esp函数执行send\n");
   sendData(&huart1, command);
-  while (AT_OK_Flag == 0)
-    rt_thread_mdelay(50);
+  waitCommand("OK",10000);
   AT_OK_Flag = 0;
   rt_kprintf("发送数据\n");
   sendData(&huart1, message);
-  while (AT_OK_Flag == 0)
-    rt_thread_mdelay(50);
-  AT_OK_Flag = 0;
+  waitCommand("OK",10000);
   rt_kprintf("发送完成\n");
 }
 void sendPlan(PlanList *planList)
@@ -108,9 +136,7 @@ void sendPlan(PlanList *planList)
   sprintf(command, "AT+CIPSEND=0,%d\r\n", requiredSize);
   sendData(&huart1, command);
   rt_kprintf(command);
-  while (AT_OK_Flag == 0)
-    rt_thread_mdelay(50);
-  AT_OK_Flag = 0;
+  waitCommand("OK",10000);
   // 发送 '['
   char *openingBracket = "[";
   sendData(&huart1, openingBracket);
@@ -139,9 +165,7 @@ void sendPlan(PlanList *planList)
   char *closingBracket = "]\n";
   sendData(&huart1, closingBracket);
   rt_kprintf(closingBracket);
-  while (AT_OK_Flag == 0)
-    rt_thread_mdelay(50);
-  AT_OK_Flag = 0;
+  waitCommand("OK",10000);
   rt_kprintf("发送完成\n");
 }
 

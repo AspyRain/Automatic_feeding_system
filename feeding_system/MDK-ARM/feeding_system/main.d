@@ -42,4 +42,4 @@ feeding_system/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\string.h \
   ..\Core\Src\timer.h \
   D:\software\Keil\Core\ARM\ARMCLANG\Bin\..\include\stdio.h \
-  ..\Core\Src\BPC_DECODE.h ..\Core\Src\define.h
+  ..\Core\Src\BPC_DECODE.h ..\Core\Src\define.h ..\Core\Src\oled.h
