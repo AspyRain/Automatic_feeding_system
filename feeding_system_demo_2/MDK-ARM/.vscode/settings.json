@@ -1,7 +1,0 @@
-{
-    "files.associations": {
-        "rtthread.h": "c",
-        "data_structure.h": "c",
-        "stdio.h": "c"
-    }
-}
